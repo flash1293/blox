@@ -21,9 +21,9 @@ var config = {
 	gravity: 1,
 	builder: {
 		name: 'normal',
-		sinLength: 4.5,
-		offset: 10,
-		amplitude: 4,
+		sinLength: 5.5,
+		offset: 20,
+		amplitude: 8,
 		stoneLevel: 5
 	},
 	physicalFrameTime: 1000/60,
