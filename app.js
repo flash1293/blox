@@ -10,15 +10,16 @@ Object.size = function(obj) {
 
 //various configs for the game-engine
 var config = {
-	mapWidth: 100, //width of the complete map
+	mapWidth: 1000, //width of the complete map
 	mapHeight: 100, //height of the complete map
 	viewPortWidth: window.innerWidth, //width of the canvas-els
 	viewPortHeight: window.innerHeight, //height of the canvas-els
 	startPosX: 0, //start-position of the camera
 	startPosY: 0, //end-position of the camera
 	blockSize: 50, //size of a block in px
-	cameraSpeed: 10, //speed of the camera per frame
-	builder: 'normal'
+	cameraSpeed: 3, //speed of the camera per frame
+	builder: 'normal',
+	physicalFrameTime: 1000/60
 };
 
 
@@ -35,20 +36,25 @@ var gameEngine = {
 		});
 		jaws.preventDefaultKeys(["up","down","left","right","space"]);
 		this.viewport.moveTo(config.startPosX,config.startPosY);
-
+		this.lastUpdate = Date.now();
 	},
 	
 	update: function() {
-		if(jaws.pressed("left"))  { this.viewport.move(-config.cameraSpeed,0);  }
-		if(jaws.pressed("right")) { this.viewport.move(config.cameraSpeed,0);   }
-		if(jaws.pressed("up"))    { this.viewport.move(0, -config.cameraSpeed); }
-		if(jaws.pressed("down"))  { this.viewport.move(0, config.cameraSpeed);  }
-		console.log(jaws.game_loop.fps);
-
+		var currentTimeStamp = Date.now();
+		for(var i=this.lastUpdate;i<currentTimeStamp;i=i+config.physicalFrameTime) {
+			if(jaws.pressed("left"))  { this.viewport.move(-config.cameraSpeed,0);  }
+			if(jaws.pressed("right")) { this.viewport.move(config.cameraSpeed,0);   }
+			if(jaws.pressed("up"))    { this.viewport.move(0, -config.cameraSpeed); }
+			if(jaws.pressed("down"))  { this.viewport.move(0, config.cameraSpeed);  }
+		}
+		this.lastUpdate = currentTimeStamp;
 	},
 
 	draw: function() {
 		jaws.clear();
+		this.viewport.drawTileMap(this.world);
+		this.viewport.drawTileMap(this.world);
+		this.viewport.drawTileMap(this.world);
 		this.viewport.drawTileMap(this.world);
 	},
 
