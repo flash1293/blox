@@ -2481,7 +2481,8 @@ jaws.TileMap.prototype.atRect = function(rect) {
     for(var col = from_col; col <= to_col; col++) {
       for(var row = from_row; row <= to_row; row++) {
         this.cells[col][row].forEach( function(item, total) { 
-          if(objects.indexOf(item) == -1) { objects.push(item) }
+           //if(objects.indexOf(item) == -1) { objects.push(item) }
+		objects.push(item);
         })
       }
     }

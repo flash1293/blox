@@ -53,9 +53,6 @@ var gameEngine = {
 	draw: function() {
 		jaws.clear();
 		this.viewport.drawTileMap(this.world);
-		this.viewport.drawTileMap(this.world);
-		this.viewport.drawTileMap(this.world);
-		this.viewport.drawTileMap(this.world);
 	},
 
 	builder: {
@@ -65,6 +62,7 @@ var gameEngine = {
 					var options = gameEngine.blocks.dirt;
 					options.x = i*config.blockSize;
 					options.y = j*config.blockSize
+					map.push(new jaws.Sprite(options));
 					map.push(new jaws.Sprite(options));
 				}
 			}
