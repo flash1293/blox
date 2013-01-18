@@ -113,6 +113,7 @@ jaws.init = function(options) {
     jaws.canvas = document.createElement("canvas")
     jaws.canvas.width = options.width
     jaws.canvas.height = options.height
+    jaws.canvas.style.backgroundColor = options.bgcolor;
     jaws.context = jaws.canvas.getContext('2d')
     document.body.appendChild(jaws.canvas)
   }
