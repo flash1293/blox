@@ -2226,12 +2226,12 @@ jaws.Viewport = function ViewPort(options) {
   this.centerAround = function(item) {
 	var newX = item.x - this.width/2;
 	var newY = item.y - this.height/2;
-	var offsetX = this.width/3;
+	var offsetX = this.width/6;
 	var offsetY = this.height/3;
 	if( this.x + offsetX < newX ) this.x = newX - offsetX;
 	if( this.x - offsetX > newX ) this.x = newX + offsetX;
 	if( this.y + offsetY < newY ) this.y = newY - offsetY;
-	if( this.y - offsetY > newY ) this.y = newY + offsetY;
+	if( this.y - offsetY + item.height > newY ) this.y = newY + offsetY - item.height;
     this.verifyPosition()
   };
 
