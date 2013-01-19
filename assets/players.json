@@ -1,0 +1,17 @@
+{
+	"minenarbeiter": {
+		"sprite_sheet": "minenarbeiter.png",
+
+		"startDisplayMode": "standright",
+
+		"typeClass": "human",
+
+		"gravitable": true,
+
+		"collidable": true,
+
+		"walkSpeed": 3,
+
+		"jumpHeight": 15
+	}
+}

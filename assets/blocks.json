@@ -1,0 +1,18 @@
+{
+	"dirt": {
+		"health": 100,
+		"collision": true,
+		"sprite": "dirt.gif"
+
+	},
+	"stone": {
+		"health": 100,
+		"collision": true,
+		"sprite": "stone.png"
+	},
+	"grass": {
+		"health": 100,
+		"collision": true,
+		"sprite": "grass.gif"
+	}
+}
