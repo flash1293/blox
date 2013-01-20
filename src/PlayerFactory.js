@@ -7,17 +7,42 @@
  *
  * */
 gameEngine.PlayerFactory = function(options){
-	player = {};
-	player.x = options.x;
-	player.y = options.y;
+	var player = {};
 	player.dx = 0;
 	player.dy = 0;
+	player.controllMode = options.controllMode;
 	player.staticInfo = jaws.assets.get("assets/players.json")[options.type];
 	player.sprite = new jaws.Sprite({
 			x: options.x,
 			y: options.y,
 			anchor: "center_bottom"	
 	});
+
+
+	if(player.staticInfo.defaultTool != undefined) {
+		player.tool = gameEngine.ToolFactory({type: player.staticInfo.defaultTool, carrier: options.type, x: options.x, y: options.y}, player);
+	}
+
+	player.controll = function() {
+		if(this.controllMode == "keyboard") {
+			this.behavior.keyboard();
+		}
+		if(this.controllMode == "ki") {
+			this.behavior[this.state]();
+		}
+	};
+	player.behavior = {};
+	player.behavior.keyboard = function() {
+		if(jaws.pressed("left"))  { player.dx = -player.staticInfo.walkSpeed; }
+		else if(jaws.pressed("right")) { player.dx = player.staticInfo.walkSpeed; }
+		else player.dx = 0;
+		if(jaws.pressed("up"))    { if(player.can_jump) { player.dy = -player.staticInfo.jumpHeight; player.can_jump = false; } }
+	};
+
+	player.draw = function() {
+		this.sprite.draw();
+		if(this.tool != undefined && this.tool.staticInfo.visible) this.tool.draw();
+	};
 	player.move = function() {
 
 		this.sprite.x += this.dx;
@@ -76,6 +101,8 @@ gameEngine.PlayerFactory = function(options){
 			if(this.dx < 0) this.displayMode = 'walkleft';
 			if(this.dx == 0) this.displayMode = ((this.oldDisplayMode == 'walkright' || this.oldDisplayMode == 'standright') ? 'standright' : 'standleft');
 			this.sprite.setImage(this.sprite.animations[this.displayMode].next());
+
+			if(this.tool != undefined) this.tool.adjustDisplayMode();
 		};
 	}
 

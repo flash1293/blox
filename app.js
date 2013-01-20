@@ -22,7 +22,7 @@ gameEngine.setup = function() {
 		max_y: config.mapHeight*config.blockSize
 	});
 
-	this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter'});
+	this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: 'keyboard'});
 	this.players.push(this.player);
 
 	jaws.preventDefaultKeys(["up","down","left","right","space"]);
@@ -33,11 +33,8 @@ gameEngine.setup = function() {
 gameEngine.update =  function() {
 	var currentTimeStamp = Date.now();
 	for(var i=this.lastUpdate;i<currentTimeStamp;i=i+config.physicalFrameTime) {
-		if(jaws.pressed("left"))  { this.player.dx = -this.player.staticInfo.walkSpeed; }
-		else if(jaws.pressed("right")) { this.player.dx = this.player.staticInfo.walkSpeed; }
-		else (this.player.dx = 0);
-		if(jaws.pressed("up"))    { if(this.player.can_jump) { this.player.dy = -this.player.staticInfo.jumpHeight; this.player.can_jump = false; } }
 		for(var j=0;j<this.players.length;j++) {
+			this.players[j].controll();
 			this.players[j].move();
 			this.players[j].adjustDisplayMode();	
 		}
@@ -52,7 +49,7 @@ gameEngine.draw = function() {
 
 	this.viewport.apply( function() {
 		for(var i=0;i<gameEngine.players.length;i++) {
-			if(gameEngine.viewport.isPartlyInside(gameEngine.players[i].sprite)) gameEngine.players[i].sprite.draw();
+			if(gameEngine.viewport.isPartlyInside(gameEngine.players[i].sprite)) gameEngine.players[i].draw();
 		}
 	});
 };

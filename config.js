@@ -21,10 +21,14 @@ var config = {
 	assets: [
 		"players.json",
 		"blocks.json",
+		"tools.json",
 
 		"blocks/dirt.gif",
 		"blocks/grass.gif",
 		"blocks/stone.png",
-		"agents/minenarbeiter.png"
+		"agents/minenarbeiter.png",
+
+		"tools/hand/simple.png"
+
 	]
 };

@@ -1,0 +1,14 @@
+{
+	"hand": {
+		"damage": 10,
+		"visible": true,
+		"sprite": {
+			"minenarbeiter": {
+				"sprite_sheet": "simple.png",
+				"frameSize": [50,100],
+				"frameCount": 6,
+				"duration": 200
+			}
+		}
+	}
+}
