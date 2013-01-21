@@ -73,10 +73,11 @@ gameEngine.ToolFactory = function(options, carrier){
 		this.sprite.setImage(this.sprite.animations[this.displayMode].next());
 	
 
+		//set x-anchor new so tool is in the right position after the direction-change 
+		this.sprite.anchor_x = ((this.displayMode == "activeleft" || this.displayMode == "holdleft")?this.sprite.xAnchorLeft:this.sprite.xAnchorRight);
 		//adjust angle of the tool resp. to mouse-position
 		if(this.staticInfo.rotatable && this.carrier.controllMode == "keyboard") {	
 			
-			this.sprite.anchor_x = ((this.displayMode == "activeleft" || this.displayMode == "holdleft")?this.sprite.xAnchorLeft:this.sprite.xAnchorRight);
 
 			var x = jaws.mouse_x+gameEngine.viewport.x-gameEngine.player.sprite.x;
 			var y = jaws.mouse_y+gameEngine.viewport.y-gameEngine.player.sprite.y+this.sprite.yFixOffset;
