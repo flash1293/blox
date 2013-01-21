@@ -1,9 +1,9 @@
 
 /*
- * Beispiel für das options-Objekt:
- * x: x-Koordinate
- * y: y-Koordinate
- * type: Typ des Players (läd statische einstellungen aus players.json)
+ * example options-object:
+ * x: x-coordinate
+ * y: y-coordinate
+ * type: type/name of the player ( loaded from players.json)
  *
  * */
 gameEngine.PlayerFactory = function(options){
@@ -37,6 +37,7 @@ gameEngine.PlayerFactory = function(options){
 		else if(jaws.pressed("right")) { player.dx = player.staticInfo.walkSpeed; }
 		else player.dx = 0;
 		if(jaws.pressed("up"))    { if(player.can_jump) { player.dy = -player.staticInfo.jumpHeight; player.can_jump = false; } }
+		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { player.tool.active =  true; }
 	};
 
 	player.draw = function() {

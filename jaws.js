@@ -2069,7 +2069,6 @@ jaws.Animation.prototype.update = function() {
       this.index -= this.frame_direction
       if (this.on_end) {
         this.on_end()
-        this.on_end = null
       }
     }
   }
