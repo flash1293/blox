@@ -1,4 +1,13 @@
 
+/**
+ * very simple map-generator (just sin-hills with dirt and grass on top)
+ * parameters:
+ * 	sinLength: width of the hills
+ * 	offset: space between hill-baseline and top of the map
+ * 	amplitude: height of the hills
+ * 	stoneLevel: amount of dirt-blocks before stone-blocks
+ *
+ * */
 gameEngine.builder.normal = function(map,conf) {
 	for(var i=0;i<config.mapWidth;i++) {
 		var topLevel = Math.floor(Math.sin(i/conf.sinLength)*conf.amplitude+conf.offset);
