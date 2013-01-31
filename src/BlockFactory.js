@@ -16,6 +16,12 @@ gameEngine.BlockFactory = function(options) {
 	//loaded static parameters from block.json
 	block.staticInfo = jaws.assets.get("assets/blocks.json")[options.type];
 
+	block.health = block.staticInfo.health;
+
+	//handling des "konsumieren" des blocks von einem spieler
+	block.consume = function(player) {
+	};
+
 	//create sprite for the block
 	block.sprite = new jaws.Sprite({
 		image: 'assets/blocks/'+block.staticInfo.sprite,

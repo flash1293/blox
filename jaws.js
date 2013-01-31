@@ -1026,6 +1026,22 @@ jaws.Rect.prototype.getPosition = function() {
   return [this.x, this.y]
 }
 
+
+jaws.Rect.prototype.shrink = function(offset) {
+	this.x += offset;
+	this.y += offset;
+	return this;
+}
+
+jaws.Rect.prototype.inflate = function(offset) {
+	this.x -= offset;
+	this.y -= offset;
+	this.right += offset;
+	this.bottom += offset;
+	return this;
+}
+
+
 /** Move rect x pixels horizontally and y pixels vertically */
 jaws.Rect.prototype.move = function(x,y) {
   this.x += x
@@ -2373,6 +2389,13 @@ jaws.TileMap.prototype.clear = function() {
       this.cells[col][row] = []
     }
   }
+}
+
+
+jaws.TileMap.prototype.clearCell = function(x,y) {
+	if(this.cells[x] == undefined) return;
+	if(this.cells[x][y] == undefined) return;
+	this.cells[x][y] = [];
 }
 
 /** Sort arrays in each cell in tile map according to sorter-function (see Array.sort) */

@@ -55,8 +55,12 @@ gameEngine.PlayerFactory = function(options){
 		else if(jaws.pressed("right")) { player.dx = player.staticInfo.walkSpeed; }
 		else player.dx = 0;
 		if(jaws.pressed("up"))    { if(player.can_jump) { player.dy = -player.staticInfo.jumpHeight; player.can_jump = false; } }
-		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { player.tool.active =  true; }
+		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
+			player.tool.active =  true; 
+			player.tool.handleAction();
+		}
 	};
+
 
 	//draws the player and corresponding sprites (tools, blood, etc.)
 	player.draw = function() {
@@ -72,7 +76,7 @@ gameEngine.PlayerFactory = function(options){
 
 		//if the player can collide with blocks
 		if(this.staticInfo.collidable) {
-			var collisionBlocks = gameEngine.world.atRect(this.sprite.rect());
+			var collisionBlocks = gameEngine.world.atRect(this.sprite.rect().shrink(config.hitBoxOffset));
 			for(var i=0;i<collisionBlocks.length;i++) {
 
 				//if the block is a solid block (causes a collision)
@@ -87,7 +91,7 @@ gameEngine.PlayerFactory = function(options){
 
 		//if the player can collide with blocks
 		if(this.staticInfo.collidable) {
-			var collisionBlocks = gameEngine.world.atRect(this.sprite.rect());
+			var collisionBlocks = gameEngine.world.atRect(this.sprite.rect().shrink(config.hitBoxOffset));
 			for(var i=0;i<collisionBlocks.length;i++) {
 
 				//if the block is a solid block (causes a collision)

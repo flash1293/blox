@@ -2,17 +2,20 @@
 	"dirt": {
 		"health": 100,
 		"collision": true,
+		"diggable": true,
 		"sprite": "dirt.gif"
 
 	},
 	"stone": {
-		"health": 100,
+		"health": 1000,
 		"collision": true,
+		"diggable": true,
 		"sprite": "stone.png"
 	},
 	"grass": {
-		"health": 100,
+		"health": 1000,
 		"collision": true,
+		"diggable": true,
 		"sprite": "grass.gif"
 	}
 }

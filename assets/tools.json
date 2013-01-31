@@ -3,6 +3,8 @@
 		"damage": 10,
 		"visible": true,
 		"rotatable": true,
+		"isDiggingTool": true,
+		"range": 20,
 		"sprite": {
 			"minenarbeiter": {
 				"sprite_sheet": "simple.png",

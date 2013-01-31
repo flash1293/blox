@@ -88,7 +88,36 @@ gameEngine.ToolFactory = function(options, carrier){
 
 		}
 
+	};
+
+	tool.handleAction = function (){
+		if(this.staticInfo.isDiggingTool) {
+			var block = this.getClickedBlock();
+			if(block == undefined) return;
+			if(block.staticInfo.diggable) {
+				block.health -= this.staticInfo.damage;
+				if(block.health <= 0) {
+					block.consume(this.carrier);
+					gameEngine.world.clearCell(block.x,block.y);
+				}
+
+			}
+
+		}
 	}
+
+	tool.getClickedBlock = function() {
+		var collisionBlocks = gameEngine.world.atRect(new jaws.Rect(gameEngine.viewport.x+jaws.mouse_x,gameEngine.viewport.y+jaws.mouse_y,1,1));
+
+		var blocksInRange = gameEngine.world.atRect(tool.carrier.sprite.rect().inflate(tool.staticInfo.range));
+
+		for(var i=0;i<collisionBlocks.length;i++) {
+			for(var j=0;j<blocksInRange.length;j++) {
+				if(collisionBlocks[i].block != undefined && collisionBlocks[i].block == blocksInRange[j].block) return collisionBlocks[i].block;
+			}
+		}
+	
+	};
 
 	//draw the tool resp. to the player holding it
 	tool.draw = function() {
