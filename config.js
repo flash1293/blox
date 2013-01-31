@@ -10,6 +10,7 @@ var config = {
 	blockSize: 50, //size of a block in px
 	cameraSpeed: 5, //speed of the camera per frame
 	gravity: 1, //velocity of gravity
+	hitBoxOffset: 5,
 	builder: { //config for the builder-algorithm
 		name: 'normal', //name of the algorithm
 		sinLength: 5.5, //alg-specific configs
