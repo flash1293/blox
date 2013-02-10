@@ -40,6 +40,11 @@ gameEngine.PlayerFactory = function(options){
 		if(this.controllMode == "keyboard") {
 			this.behavior.keyboard();
 		}
+		
+		//if controllmode touch...
+		if(this.controllMode == "touch") {
+			this.behavior.touch();
+		}
 		//if controllmode ki, use the behavior of the current state ( statemachine)
 		if(this.controllMode == "ki") {
 			this.behavior[this.state]();
@@ -55,6 +60,20 @@ gameEngine.PlayerFactory = function(options){
 		else if(jaws.pressed("right")) { player.dx = player.staticInfo.walkSpeed; }
 		else player.dx = 0;
 		if(jaws.pressed("up"))    { if(player.can_jump) { player.dy = -player.staticInfo.jumpHeight; player.can_jump = false; } }
+		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
+			player.tool.active =  true; 
+			player.tool.handleAction();
+		}
+	};
+	
+	//user-controlled player (touch-device)
+	player.behavior.touch = function() {
+		var x = jaws.mouse_x+gameEngine.viewport.x-gameEngine.player.sprite.x;
+		var y = jaws.mouse_y+gameEngine.viewport.y-gameEngine.player.sprite.y;
+		if(x < -gameEngine.player.sprite.width/2)  { player.dx = -player.staticInfo.walkSpeed; }
+		else if(x > gameEngine.player.sprite.width/2) { player.dx = player.staticInfo.walkSpeed; }
+		else player.dx = 0;
+		if(y < -gameEngine.player.sprite.height)    { if(player.can_jump) { player.dy = -player.staticInfo.jumpHeight; player.can_jump = false; } }
 		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
 			player.tool.active =  true; 
 			player.tool.handleAction();

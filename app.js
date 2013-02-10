@@ -9,6 +9,8 @@ Object.size = function(obj) {
 
 
 
+
+
 //create global main-object
 var gameEngine = {};
 
@@ -31,7 +33,7 @@ gameEngine.setup = function() {
 	});
 
 	//create main player (controlled by keyboard)
-	this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: 'keyboard'});
+	this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: ('ontouchstart' in document.documentElement?'touch':'keyboard')});
 	//add him to the players-list (activate him)
 	this.players.push(this.player);
 
@@ -43,6 +45,7 @@ gameEngine.setup = function() {
 
 	//timestamp-check for fps-independent game-logic
 	this.lastUpdate = Date.now();
+
 };
 	
 //delegates game-logic, called every frame

@@ -114,6 +114,7 @@ jaws.init = function(options) {
     jaws.canvas.width = options.width
     jaws.canvas.height = options.height
     jaws.canvas.style.backgroundColor = options.bgcolor;
+    jaws.canvas.id = 'blox';
     jaws.context = jaws.canvas.getContext('2d')
     document.body.appendChild(jaws.canvas)
   }
@@ -444,6 +445,7 @@ jaws.setupInput = function() {
   window.addEventListener("mousedown", handleMouseDown, false);
   window.addEventListener("mouseup", handleMouseUp, false);
   window.addEventListener("touchstart", handleTouchStart, false);
+  window.addEventListener("touchmove", handleTouchStart, false);
   window.addEventListener("touchend", handleTouchEnd, false);
   window.addEventListener("blur", resetPressedKeys, false);
 
@@ -527,7 +529,7 @@ function handleTouchStart(e) {
 	pressed_keys["left_mouse_button"] = true
 	jaws.mouse_x = e.touches[0].pageX - jaws.canvas.offsetLeft;
 	jaws.mouse_y = e.touches[0].pageY - jaws.canvas.offsetTop;
-	//e.preventDefault()
+	e.preventDefault();
 }
 
 /** @private
