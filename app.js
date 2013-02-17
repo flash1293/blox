@@ -1,90 +1,60 @@
-//object-extension for couting members
-Object.size = function(obj) {
-	var size = 0, key;
-	for (key in obj) {
-		if (obj.hasOwnProperty(key)) size++;
-	}
-	return size;
-};
+
+/**
+ * Module dependencies.
+ */
+
+var express = require('express')
+  , http = require('http');
+
+var app = express();
+
+var server = http.createServer(app)
+var io = require('socket.io').listen(server);
 
 
+app.configure(function(){
+  app.set('port', process.env.PORT || 3000);
+  app.set('views', __dirname + '/views');
+  app.set('view engine', 'jade');
+  app.use(express.favicon());
+  app.use(express.logger('dev'));
+  app.use(express.bodyParser());
+  app.use(express.methodOverride());
+  app.use(app.router);
+  app.use(express.static(__dirname + '/public'));
+});
 
+app.configure('development', function(){
+  app.use(express.errorHandler());
+});
 
+server.listen(app.get('port'), function(){
+  console.log("Express server listening on port " + app.get('port'));
+});
 
-//create global main-object
-var gameEngine = {};
+var players = [];
 
-//setup method - called once
-gameEngine.setup = function() {
+players.push({id:0, active: false});
 
-	//create empty list for active players in the world
-	this.players = [];
-
-	//create tilemap for world
-	this.world = new TileMap({size: [config.mapWidth, config.mapHeight], cell_size: [config.blockSize,config.blockSize]});
-
-	//call builder to create the world in the tilemap
-	this.builder[config.builder.name](this.world,config.builder);
-
-	//create viewport for the visible part of the map
-	this.viewport = new jaws.Viewport({
-		max_x: config.mapWidth*config.blockSize, 
-		max_y: config.mapHeight*config.blockSize
+io.sockets.on('connection', function (socket) {
+	console.log('new connection');
+	socket.on('register', function(data) {
+		console.log("registered");
+		console.log(data);
+		var player = { id: players.length, data: data, socket: socket, active: true };
+		socket.emit('init', {id: players.length});
+		for(var i=0;i<players.length;i++) { console.log('inform new player about #'+i); if(players[i].active) player.socket.emit('new', { id: players[i].id, data: players[i].data }); }
+		for(var i=0;i<players.length;i++) { console.log('inform '+i+' about new player');if(players[i].active) players[i].socket.emit('new', {id: player.id, data: player.data  } ); }
+		players.push(player);
+		socket.on('update', function (data) {
+			console.log(Date.now()+':');
+			console.log(data);
+			for(var i=0;i<players.length;i++) { if(players[i].active && players[i].socket !== socket) players[i].socket.emit('update', data); }
+		});
+		socket.on('disconnect', function() {
+			player.active = false;
+			console.log('set player '+player.id+' to not active');
+		});
 	});
-
-	//create main player (controlled by keyboard)
-	this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: ('ontouchstart' in document.documentElement?'touch':'keyboard')});
-	//add him to the players-list (activate him)
-	this.players.push(this.player);
-
-	//probably useless
-	jaws.preventDefaultKeys(["up","down","left","right","space"]);
-
-	//initialize viewport-position (probably useless)
-	this.viewport.moveTo(config.startPosX,config.startPosY);
-
-	//timestamp-check for fps-independent game-logic
-	this.lastUpdate = Date.now();
-
-};
-	
-//delegates game-logic, called every frame
-gameEngine.update =  function() {
-	var currentTimeStamp = Date.now();
-	//get independent from game-logic (important for slow pcs and multiplayer)
-	for(var i=this.lastUpdate;i<currentTimeStamp;i=i+config.physicalFrameTime) {
-		//iterate all players 
-		for(var j=0;j<this.players.length;j++) {
-			//make a descision for next move (input= ki/keyboard/...)
-			this.players[j].controll();
-			//move the player resp. to its vector-values (collision-check etc.)
-			this.players[j].move();
-			//adjust the used sprite for the player
-			this.players[j].adjustDisplayMode();	
-		}
-	}
-	//adjust position of the viewport
-	this.viewport.centerAround(this.player.sprite);
-	//for fps-independet game-logic
-	this.lastUpdate = currentTimeStamp;
-};
-
-//method with drawing-logic - delegates into game-objects
-gameEngine.draw = function() {
-	//clear canvas
-	jaws.clear();
-	//draw map
-	this.viewport.drawTileMap(this.world);
-
-	//draw players
-	this.viewport.apply( function() {
-		for(var i=0;i<gameEngine.players.length;i++) {
-			//if they are inside the viewport
-			if(gameEngine.viewport.isPartlyInside(gameEngine.players[i].sprite)) gameEngine.players[i].draw();
-		}
-	});
-};
-
-gameEngine.builder = {};
-
+});
 

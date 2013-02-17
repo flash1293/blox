@@ -1,0 +1,17 @@
+{
+    "paths": [
+        "config.js",
+        "jaws.js",
+        "app.js",
+        "src/PlayerFactory.js",
+        "src/BlockFactory.js",
+        "src/ToolFactory.js",
+        "src/builder/normal.js",
+        "init.js"
+    ],
+    "out": "blox.js",
+    "uglify": true,
+    "hint": false,
+    "before": "",
+    "after": ""
+}
