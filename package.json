@@ -1,12 +1,16 @@
 {
   "name": "blox-server",
-  "version": "0.0.1",
+  "version": "0.0.1-5",
   "private": true,
   "scripts": {
-    "start": "node app"
+    "start": "node app.js"
   },
   "dependencies": {
     "express": "3.0.0beta6",
     "socket.io": "0.9.13"
+  },
+  "subdomain": "blox",
+  "engines": {
+    "node": "0.8.x"
   }
 }

@@ -21,7 +21,7 @@ var config = {
 	//destinated time per frame
 	physicalFrameTime: (1000/60), 
 	multiplayer: true,
-	host: '192.168.0.15:3000',
+	host: 'blox.jit.su:80',
 	updateInterval: 50,
 	//all asset-files being loaded before the game starts
 	assets: [
