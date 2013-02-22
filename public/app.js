@@ -88,11 +88,14 @@ gameEngine.handleInit = function(data) {
 };
 
 gameEngine.handleUpdate = function(data) {
+	gameEngine.log('handle position-update');
 	gameEngine.players[data.id].markDx = data.markDx;
 	gameEngine.players[data.id].markDy = data.markDy;
-	if(!gameEngine.isInTolerance(gameEngine.players[data.id].sprite.x, data.x)) {
-		gameEngine.players[data.id].sprite.x = data.x;
-	}
+
+	/* set x direct */
+	gameEngine.players[data.id].sprite.x = data.x;
+
+	/* but y only if a big difference occurs */
 	if(!gameEngine.isInTolerance(gameEngine.players[data.id].sprite.y, data.y)) {
 		gameEngine.players[data.id].sprite.y = data.y;
 	}
