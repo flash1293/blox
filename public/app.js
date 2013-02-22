@@ -9,7 +9,7 @@ Object.size = function(obj) {
 
 Object.prototype.foreach = function( callback ) {
     for( var k in this ) {
-        if(this.hasOwnProperty(k)) {
+        if(this.hasOwnProperty(k) && this[k] != undefined) {
            callback( k, this[ k ] );
         }
     }
@@ -52,7 +52,7 @@ gameEngine.setup = function() {
 	//timestamp-check for fps-independent game-logic
 	this.lastUpdate = Date.now();
 	
-	socket.emit('register',{type: gameEngine.player.type});
+	socket.emit('register',{type: gameEngine.player.type, x: config.startPosX, y:config.startPosY});
 
 };
 
@@ -77,23 +77,41 @@ gameEngine.update =  function() {
 	this.lastUpdate = currentTimeStamp;
 };
 
+gameEngine.isInTolerance = function(a,b) {
+	if(isNaN(a) || isNaN(b)) return false;
+	return Math.abs(a - b) < config.positionUpdateTolerance;
+}
+
 gameEngine.handleInit = function(data) {
 	gameEngine.myId = data.id;
+	gameEngine.log("My ID is "+data.id);
 };
 
 gameEngine.handleUpdate = function(data) {
-	gameEngine.players[data.id].dx = data.dx;
-	gameEngine.players[data.id].dy = data.dy;
-	gameEngine.players[data.id].sprite.x = data.x;
-	gameEngine.players[data.id].sprite.y = data.y;
+	gameEngine.players[data.id].markDx = data.markDx;
+	gameEngine.players[data.id].markDy = data.markDy;
+	if(!gameEngine.isInTolerance(gameEngine.players[data.id].sprite.x, data.x)) {
+		gameEngine.players[data.id].sprite.x = data.x;
+	}
+	if(!gameEngine.isInTolerance(gameEngine.players[data.id].sprite.y, data.y)) {
+		gameEngine.players[data.id].sprite.y = data.y;
+	}
 };
 
 gameEngine.handleNew = function(data) {
 	if(data.id != gameEngine.myId) {
+		gameEngine.log("add new player #"+data.id);
 		var player = gameEngine.PlayerFactory({x: data.data.x, y: data.data.y, type: data.data.type, controllMode: 'none'});
 		//add him to the players-list (activate him)
 		gameEngine.players[data.id] = player;
+	} else {
+		gameEngine.log("add myself??! hell no");
 	}
+};
+
+gameEngine.handleRemove = function(data) {
+	gameEngine.log("remove player #"+data.id);
+	gameEngine.players[data.id] = undefined;
 };
 
 //method with drawing-logic - delegates into game-objects
@@ -110,5 +128,11 @@ gameEngine.draw = function() {
 		});
 	});
 };
+
+gameEngine.log = function(msg) {
+	if(config.debug) {
+		console.log(msg);
+	}
+}
 
 gameEngine.builder = {};

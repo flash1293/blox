@@ -11,6 +11,7 @@ jaws.onload = function() {
 	socket.on('init', gameEngine.handleInit);
 	socket.on('update', gameEngine.handleUpdate);
 	socket.on('new', gameEngine.handleNew);
+	socket.on('remove', gameEngine.handleRemove);
 
 	jaws.unpack(); //unpack it
 	//add all assets from config.js

@@ -30,7 +30,6 @@ gameEngine.PlayerFactory = function(options){
 			anchor: "center_bottom"	
 	});
 
-
 	//if the player has a default-tool, create it and link it to the player-object
 	if(player.staticInfo.defaultTool != undefined) {
 		player.tool = gameEngine.ToolFactory({type: player.staticInfo.defaultTool, carrier: options.type, x: options.x, y: options.y}, player);
@@ -41,57 +40,102 @@ gameEngine.PlayerFactory = function(options){
 		//if controllmode keyboard, use the keyboard-behavior
 		if(this.controllMode == "keyboard") {
 			this.behavior.keyboard();
-			if(config.multiplayer) {
-				this.update();
-			}
 		}
 		
 		//if controllmode touch...
 		if(this.controllMode == "touch") {
 			this.behavior.touch();
-			if(config.multiplayer) {
-				this.update();
-			}
 		}
+
 		//if controllmode ki, use the behavior of the current state ( statemachine)
 		if(this.controllMode == "ki") {
 			this.behavior[this.state]();
+		}
+
+		this.applyMovement();
+		if(config.multiplayer && this.controllMode != "none") {
+			this.update();
 		}
 	};
 
 	player.update = function() {
 		if(gameEngine.myId != undefined) {
-			var now = Date.now();
-			if((now - this.lastUpdate) > config.updateInterval) {
-				socket.emit('update', { id: gameEngine.myId, dx: this.dx, dy: this.dy, x: this.sprite.x, y: this.sprite.y });
-				this.lastUpdate = now;
+			if(this.markDx != this.markDxOld || this.markDy != this.markDyOld) {
+				socket.emit('update', 
+					{ 
+						id: gameEngine.myId, 
+						markDx: this.markDx, 
+						markDy: this.markDy, 
+						x: this.sprite.x, 
+						y: this.sprite.y 
+					}
+				);
+				this.markDxOld = this.markDx;
+				this.markDyOld = this.markDy;
 			}
 		}
 	};
+
+	player.applyMovement = function() {
+		this.dx = this.markDx;
+		if(this.markDy < 0 && this.can_jump) {
+			this.dy = this.markDy;
+			this.can_jump = false;
+		}
+	}
 
 	//create behavior-methods
 	player.behavior = {};
 
 	//user-controlled player
 	player.behavior.keyboard = function() {
-		if(jaws.pressed("left"))  { player.dx = -player.staticInfo.walkSpeed; }
-		else if(jaws.pressed("right")) { player.dx = player.staticInfo.walkSpeed; }
-		else player.dx = 0;
-		if(jaws.pressed("up"))    { if(player.can_jump) { player.dy = -player.staticInfo.jumpHeight; player.can_jump = false; } }
+		if(jaws.pressed("left"))  { 
+			player.markDx = -player.staticInfo.walkSpeed;
+			//player.dx = -player.staticInfo.walkSpeed; 
+		}
+		else if(jaws.pressed("right")) { 
+			player.markDx = player.staticInfo.walkSpeed;
+			//player.dx = player.staticInfo.walkSpeed; 
+		} else {
+			player.markDx = 0;
+			//player.dx = 0;
+		}
+
+		if(jaws.pressed("up")) { 
+			player.markDy = -player.staticInfo.jumpHeight;
+			//player.dy = -player.staticInfo.jumpHeight; 
+			//player.can_jump = false; 
+		} else {
+			player.markDy = 0;
+		}
+
 		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
 			player.tool.active =  true; 
 			player.tool.handleAction();
 		}
+
 	};
 	
 	//user-controlled player (touch-device)
 	player.behavior.touch = function() {
 		var x = jaws.mouse_x+gameEngine.viewport.x-gameEngine.player.sprite.x;
 		var y = jaws.mouse_y+gameEngine.viewport.y-gameEngine.player.sprite.y;
-		if(x < -gameEngine.player.sprite.width/2)  { player.dx = -player.staticInfo.walkSpeed; }
-		else if(x > gameEngine.player.sprite.width/2) { player.dx = player.staticInfo.walkSpeed; }
-		else player.dx = 0;
-		if(y < -gameEngine.player.sprite.height)    { if(player.can_jump) { player.dy = -player.staticInfo.jumpHeight; player.can_jump = false; } }
+
+		if(x < -gameEngine.player.sprite.width/2)  { 
+			player.markDx = -player.staticInfo.walkSpeed; 
+		} else if(x > gameEngine.player.sprite.width/2) { 
+			player.markDx = player.staticInfo.walkSpeed; 
+		} else {
+			player.markDx = 0;
+		}
+
+		if(y < -gameEngine.player.sprite.height) { 
+			player.markDy = -player.staticInfo.jumpHeight; 
+			//player.can_jump = false;
+	        } else {
+			player.markDy = 0;
+		}
+
 		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
 			player.tool.active =  true; 
 			player.tool.handleAction();
