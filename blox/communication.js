@@ -2,6 +2,9 @@
 /* array für alle player */
 var players = [];
 
+/* liste aller änderungen an der map */
+var mapChanges = [];
+
 /* füge einen deaktivierten default-user ein */
 players.push({id:0, active: false});
 
@@ -22,6 +25,15 @@ disconnectHandler = function(player, socket, data) {
 	console.log('set player '+player.id+' to not active');
 	forAllOtherPlayers(socket, function(otherPlayer) {
 		otherPlayer.socket.emit('remove', {id: player.id});
+	});
+};
+
+/* handle eine block-entfernung */
+removeBlockHandler = function(player, socket, data) {
+	console.log('player +'+player.id+' removes block '+data.x+','+data.y);
+	mapChanges.push({type:'removeblock', data: data});
+	forAllOtherPlayers(socket, function(otherPlayer) {
+		otherPlayer.socket.emit('removeblock', data);
 	});
 };
 
@@ -62,6 +74,12 @@ module.exports.communicationHandler = function(socket) {
 			player.socket.emit('new', { id: otherPlayer.id, data: otherPlayer.data }); 
 		});
 
+		/* informiere den neuen player über änderungen an der map */
+		for(var i=0;i<mapChanges.length;i++) {
+			var change = mapChanges[i];
+			player.socket.emit(change.type, change.data);
+		}
+
 
 		/* informiere alle, die schon im spiel sind, über den neuen spieler */
 		forAllPlayers(function(otherPlayer, index) {
@@ -72,7 +90,8 @@ module.exports.communicationHandler = function(socket) {
 
 		/* verknüpfe update und disconnect-abarbeitung */
 		socket.on('update',function(data) {updateHandler(player, socket, data)});
-		socket.on('remove',function(data) {disconnectHandler(player, socket, data)});
+		socket.on('disconnect',function(data) {disconnectHandler(player, socket, data)});
+		socket.on('removeblock',function(data) {removeBlockHandler(player, socket, data)});
 
 		/* füge neuen player hinzu */
 		players.push(player);

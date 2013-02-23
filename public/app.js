@@ -116,6 +116,11 @@ gameEngine.handleRemove = function(data) {
 	gameEngine.players[data.id] = undefined;
 };
 
+gameEngine.handleBlockRemove = function(data) {
+	gameEngine.log("remove player block "+data.x+","+data.y);
+	gameEngine.world.clearCell(data.x,data.y);
+};
+
 //method with drawing-logic - delegates into game-objects
 gameEngine.draw = function() {
 	//clear canvas

@@ -99,6 +99,12 @@ gameEngine.ToolFactory = function(options, carrier){
 				if(block.health <= 0) {
 					block.consume(this.carrier);
 					gameEngine.world.clearCell(block.x,block.y);
+					if(config.multiplayer) {
+						socket.emit('removeblock',{
+							x: block.x,
+							y: block.y
+						});
+					}
 				}
 
 			}
