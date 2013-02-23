@@ -92,12 +92,11 @@ gameEngine.handleUpdate = function(data) {
 	gameEngine.players[data.id].markDx = data.markDx;
 	gameEngine.players[data.id].markDy = data.markDy;
 
-	/* set x direct */
 	gameEngine.players[data.id].sprite.x = data.x;
 
-	/* but y only if a big difference occurs */
 	if(!gameEngine.isInTolerance(gameEngine.players[data.id].sprite.y, data.y)) {
 		gameEngine.players[data.id].sprite.y = data.y;
+		gameEngine.players[data.id].can_jump = false;
 	}
 };
 
