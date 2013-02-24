@@ -51,6 +51,9 @@ gameEngine.setup = function() {
 
 	//timestamp-check for fps-independent game-logic
 	this.lastUpdate = Date.now();
+
+	//create hud
+	this.hud = gameEngine.HUDFactory(this.player);
 	
 	socket.emit('register',{type: gameEngine.player.type, x: config.startPosX, y:config.startPosY});
 
@@ -117,7 +120,7 @@ gameEngine.handleRemove = function(data) {
 };
 
 gameEngine.handleBlockRemove = function(data) {
-	gameEngine.log("remove player block "+data.x+","+data.y);
+	gameEngine.log("block removed by other player: "+data.x+","+data.y);
 	gameEngine.world.clearCell(data.x,data.y);
 };
 

@@ -14,7 +14,13 @@
 
 		"jumpHeight": 15,
 
-		"defaultTool": "hand"
+		"defaultTool": "hand",
+
+		"health": 500,
+
+		"fallDamage": 10,
+
+		"fallDamageLimit": 25
 
 	}
 }

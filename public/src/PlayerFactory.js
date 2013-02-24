@@ -23,6 +23,8 @@ gameEngine.PlayerFactory = function(options){
 	//load static info from players.json
 	player.staticInfo = jaws.assets.get("assets/players.json")[options.type];
 
+	player.health = player.staticInfo.health;
+
 	//create a sprite-object for the player
 	player.sprite = new jaws.Sprite({
 			x: options.x,
@@ -82,7 +84,15 @@ gameEngine.PlayerFactory = function(options){
 			this.dy = this.markDy;
 			this.can_jump = false;
 		}
-	}
+	};
+
+	player.setHealth = function(value) {
+		this.health = value;
+		gameEngine.log("player-damage:"+value);
+		if(this.hasHealthBar) {
+			gameEngine.hud.setHealthTo(value/this.staticInfo.health);
+		}
+	};
 
 	//create behavior-methods
 	player.behavior = {};
@@ -183,6 +193,11 @@ gameEngine.PlayerFactory = function(options){
 						//it is able to jump
 						this.can_jump = true;
 						this.sprite.y = collisionBlocks[i].rect().y - 1;
+						if(this.staticInfo.fallDamage > 0 && this.staticInfo.fallDamageLimit < this.dy) {
+							var damage = this.dy / 10;
+							damage *= this.staticInfo.fallDamage;
+							this.setHealth(this.health-damage);
+						}
 					} else if(this.dy < 0) {
 						this.sprite.y = collisionBlocks[i].rect().bottom + this.sprite.height;
 					}

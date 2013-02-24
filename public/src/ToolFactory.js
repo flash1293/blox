@@ -105,6 +105,7 @@ gameEngine.ToolFactory = function(options, carrier){
 							y: block.y
 						});
 					}
+					gameEngine.log("you removed block "+block.x+","+block.y);
 				}
 
 			}
