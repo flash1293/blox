@@ -17,6 +17,8 @@ Roadmap
  *  Bisherige Items und Blöcke ins System übernehmen
  *  Leitern/Wasser einbauen (DisableGravity)
  *  Generator erweitern (Flora, Rohstoffe, Höhlen)
+ *  Background-Tiles einfügen
+ *  Wolken-Parallax 
  *  Großes Inventar
  *  Wasser-Physik einbauen
  *  Crafting (Rules)
@@ -31,3 +33,6 @@ Roadmap
  *  Redis Server-Persistance
  *  Game-Admin UI
  *  Spiele-Menü (Auswahl des Spieler-Typs etc
+ *  Offline Singleplayer mit Upload uns Share Möglichkeit
+ *  Mehrere Server in einer Node-Instanz größten
+ *  Statistik-Auswertungen
