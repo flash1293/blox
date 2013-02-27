@@ -3,8 +3,10 @@
 		"health": 100,
 		"collision": true,
 		"diggable": true,
-		"sprite": "dirt.gif"
-
+		"sprite": "dirt.gif",
+		"drops": "dirt",
+		"dropAmount": 4,
+		"dropChance": 0.5
 	},
 	"stone": {
 		"health": 1000,
@@ -16,6 +18,9 @@
 		"health": 1000,
 		"collision": true,
 		"diggable": true,
-		"sprite": "grass.gif"
+		"sprite": "grass.gif",
+		"drops": "dirt",
+		"dropAmount": 1,
+		"dropChance": 1
 	}
 }

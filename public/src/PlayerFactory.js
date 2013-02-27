@@ -17,6 +17,10 @@ gameEngine.PlayerFactory = function(options){
 
 	player.type = options.type;
 
+	player.smallInventory = new Array(9);
+	
+	player.bigInventory = new Array(36);
+
 	//set controllmode of the player (keyboard, ki or remote)
 	player.controllMode = options.controllMode;
 
@@ -77,6 +81,28 @@ gameEngine.PlayerFactory = function(options){
 			}
 		}
 	};
+
+	player.addItemsToInventory = function(type,amount) {
+		for(var i=0;i<9;i++) {
+			var item = this.smallInventory[i];
+			if(item === undefined) {
+				gameEngine.log("found empty slot, creating new item-stack");
+				this.smallInventory[i] = gameEngine.ItemFactory({type: type, amount: amount});
+				gameEngine.hud.updateItembox();
+				return;
+			}
+			if(item.type == type && Number(item.staticInfo.maxAmount) >= (Number(item.amount) + Number(amount))) {
+				gameEngine.log("found slot with same item-type, adding them up");
+				this.smallInventory[i].amount = Number(this.smallInventory[i].amount) + Number(amount);
+				gameEngine.hud.updateItembox();
+				return;
+			}
+			if(item.type == type) {
+				gameEngine.log("found slot with same item-type, but amount would be too high");
+			}
+		}	
+		gameEngine.log("item got lost because inventory is full");
+	}
 
 	player.applyMovement = function() {
 		this.dx = this.markDx;

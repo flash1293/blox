@@ -8,12 +8,42 @@
 	background: url(assets/hud/Inventar.png) top left no-repeat;
 }
 
+#itembox-0 {top: 39px;left: 10px;}
+#itembox-1 {top: 39px;left: 57px;}
+#itembox-2 {top: 39px;left: 104px;}
+#itembox-3 {top: 87px;left: 10px;}
+#itembox-4 {top: 87px;left: 57px;}
+#itembox-5 {top: 87px;left: 104px;}
+#itembox-6 {top: 133px;left: 10px;}
+#itembox-7 {top: 133px;left: 57px;}
+#itembox-8 {top: 133px;left: 104px;}
+
+.itemwrapper {
+	position:absolute;
+}
+
+.amount {
+	color: white;
+	font-weight: bold;
+	position: absolute;
+	right: 5px;
+	bottom: 2px;
+}
+
+.item {
+	width: 38px;
+	height: 38px;
+	background-repeat: no-repeat;
+}
+
+
+
 @media (max-width: 600px) {
 	#itembox {
-		-moz-transform: scale(0.7) translate(-56px, 53px);
-		-webkit-transform: scale(0.7) translate(-56px, 53px);
-		-o-transform: scale(0.7) translate(-56px, 53px);
-		transform: scale(0.7) translate(-56px, 53px);
+		-moz-transform: scale(0.7) translate(-40px, 39px);
+		-webkit-transform: scale(0.7) translate(-40px, 39px);
+		-o-transform: scale(0.7) translate(-40px, 39px);
+		transform: scale(0.7) translate(-40px, 39px);
 	}
 }
 

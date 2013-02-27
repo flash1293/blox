@@ -1,0 +1,7 @@
+{
+	"dirt": {
+		"sprite": "dirt.gif",
+		"maxAmount": 10
+
+	}
+}

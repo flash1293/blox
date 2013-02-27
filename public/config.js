@@ -21,7 +21,7 @@ var config = {
 	//destinated time per frame
 	physicalFrameTime: (1000/60), 
 	multiplayer: true,
-	//host: 'blox.jit.su:80',
+	//host: 'blox.eu01.aws.af.cm:80',
 	host: '192.168.0.15:3000',
 	updateInterval: 50,
 	positionUpdateTolerance: 100,
@@ -32,6 +32,7 @@ var config = {
 		"players.json",
 		"blocks.json",
 		"tools.json",
+		"items.json",
 
 		//block-images
 		"blocks/dirt.gif",

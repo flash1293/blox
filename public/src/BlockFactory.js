@@ -20,6 +20,16 @@ gameEngine.BlockFactory = function(options) {
 
 	//handling des "konsumieren" des blocks von einem spieler
 	block.consume = function(player) {
+		gameEngine.log("checking if block drops an item");
+		if(this.staticInfo.drops !== undefined) {
+			gameEngine.log("it does!");
+			var rand = Math.random();
+			//dropping happened!
+			if(rand <= this.staticInfo.dropChance) {
+				gameEngine.log("and we got the luck!");
+				player.addItemsToInventory(this.staticInfo.drops, this.staticInfo.dropAmount);
+			}
+		}
 	};
 
 	//create sprite for the block

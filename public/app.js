@@ -40,6 +40,13 @@ gameEngine.setup = function() {
 
 	//create main player (controlled by keyboard)
 	this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: ('ontouchstart' in document.documentElement?'touch':'keyboard')});
+
+	this.player.smallInventory[0] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
+	this.player.smallInventory[2] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
+	this.player.smallInventory[6] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
+	this.player.smallInventory[7] = gameEngine.ItemFactory({type:"dirt",amount:"10"});
+	this.player.smallInventory[8] = gameEngine.ItemFactory({type:"dirt",amount:"10"});
+
 	//add him to the players-list (activate him)
 	this.players[0] = this.player;
 
@@ -54,6 +61,7 @@ gameEngine.setup = function() {
 
 	//create hud
 	this.hud = gameEngine.HUDFactory(this.player);
+	this.hud.updateItembox();
 	
 	socket.emit('register',{type: gameEngine.player.type, x: config.startPosX, y:config.startPosY});
 
