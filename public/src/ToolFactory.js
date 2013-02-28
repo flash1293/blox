@@ -99,15 +99,49 @@ gameEngine.ToolFactory = function(options, carrier){
 				if(block.health <= 0) {
 					block.consume(this.carrier);
 					gameEngine.world.clearCell(block.x,block.y);
+					var newBlock = gameEngine.BlockFactory({x:block.x,y:block.y,type:'void'});
+					gameEngine.world.push(newBlock.sprite);
 					if(config.multiplayer) {
-						socket.emit('removeblock',{
+						socket.emit('changeblock',{
 							x: block.x,
-							y: block.y
+							y: block.y,
+							type: 'void'
 						});
 					}
 					gameEngine.log("you removed block "+block.x+","+block.y);
 				}
 
+			}
+
+		}
+	}
+
+	tool.handlePlantAction = function (){
+		var item = this.carrier.getCurrentItem();
+		if(this.staticInfo.canPlantBlocks && item !== undefined && item.staticInfo.toBlock !== undefined) {
+			var block = this.getClickedBlock();
+			var collisionBlocks = gameEngine.world.atRect(this.carrier.sprite.rect().shrink(config.hitBoxOffset));
+			for(var i=0;i<collisionBlocks.length;i++) {
+				if(collisionBlocks[i].block == block) {
+					gameEngine.log("you could plant, but player stands in the block..");
+					return;
+				}
+			}
+
+			if(block == undefined) return;
+			if(block.staticInfo.replaceable) {
+				gameEngine.world.clearCell(block.x,block.y);
+				var newBlock = gameEngine.BlockFactory({x:block.x,y:block.y,type:item.staticInfo.toBlock});
+				gameEngine.world.push(newBlock.sprite);
+				if(config.multiplayer) {
+					socket.emit('changeblock',{
+						x: block.x,
+						y: block.y,
+						type: item.staticInfo.toBlock
+					});
+				}
+				gameEngine.log("you planted block "+block.x+","+block.y);
+				this.carrier.decreaseCurrentItem(1);
 			}
 
 		}

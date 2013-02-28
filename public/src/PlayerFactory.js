@@ -18,6 +18,8 @@ gameEngine.PlayerFactory = function(options){
 	player.type = options.type;
 
 	player.smallInventory = new Array(9);
+
+	player.selectedItem = 0;
 	
 	player.bigInventory = new Array(36);
 
@@ -104,6 +106,21 @@ gameEngine.PlayerFactory = function(options){
 		gameEngine.log("item got lost because inventory is full");
 	}
 
+	player.getCurrentItem = function() {
+		return this.smallInventory[this.selectedItem];
+	};
+
+	player.decreaseCurrentItem = function(amount) {
+		gameEngine.log("decreasing current item-stack by "+amount);
+		var item = this.getCurrentItem();
+		item.amount = Number(item.amount)-Number(amount);
+		if(item.amount < 1) { 
+			this.smallInventory[this.selectedItem] = undefined; 
+			gameEngine.log("stack is empty, got removed");
+		}
+		gameEngine.hud.updateItembox();
+	};
+
 	player.applyMovement = function() {
 		this.dx = this.markDx;
 		if(this.markDy < 0 && this.can_jump) {
@@ -148,6 +165,48 @@ gameEngine.PlayerFactory = function(options){
 		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
 			player.tool.active =  true; 
 			player.tool.handleAction();
+		}
+		
+		if(jaws.pressed("right_mouse_button") && player.tool != undefined) { 
+			player.tool.active =  true; 
+			player.tool.handlePlantAction();
+		}
+
+		if(jaws.pressed("1")) {
+			player.selectedItem = 0;
+			gameEngine.hud.updateItembox();
+		}
+		if(jaws.pressed("2")) {
+			player.selectedItem = 1;
+			gameEngine.hud.updateItembox();
+		}
+		if(jaws.pressed("3")) {
+			player.selectedItem = 2;
+			gameEngine.hud.updateItembox();
+		}
+		if(jaws.pressed("4")) {
+			player.selectedItem = 3;
+			gameEngine.hud.updateItembox();
+		}
+		if(jaws.pressed("5")) {
+			player.selectedItem = 4;
+			gameEngine.hud.updateItembox();
+		}
+		if(jaws.pressed("6")) {
+			player.selectedItem = 5;
+			gameEngine.hud.updateItembox();
+		}
+		if(jaws.pressed("7")) {
+			player.selectedItem = 6;
+			gameEngine.hud.updateItembox();
+		}
+		if(jaws.pressed("8")) {
+			player.selectedItem = 7;
+			gameEngine.hud.updateItembox();
+		}
+		if(jaws.pressed("9")) {
+			player.selectedItem = 8;
+			gameEngine.hud.updateItembox();
 		}
 
 	};

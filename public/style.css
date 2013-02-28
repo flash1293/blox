@@ -36,6 +36,16 @@
 	background-repeat: no-repeat;
 }
 
+.selected:after {
+	background: url(assets/hud/ItemAuswahl2.png) top left no-repeat;
+	width:54px;
+	height:54px;
+	position:absolute;
+	content: "";
+	top: -7px;
+	left: -7px;
+}
+
 
 
 @media (max-width: 600px) {

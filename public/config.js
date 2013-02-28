@@ -38,6 +38,7 @@ var config = {
 		"blocks/dirt.gif",
 		"blocks/grass.gif",
 		"blocks/stone.png",
+		"blocks/void.png",
 
 		//player-images
 		"agents/minenarbeiter.png",

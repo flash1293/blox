@@ -1,7 +1,8 @@
 {
 	"dirt": {
 		"sprite": "dirt.gif",
-		"maxAmount": 10
+		"maxAmount": 10,
+		"toBlock": "dirt"
 
 	}
 }

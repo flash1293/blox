@@ -132,6 +132,13 @@ gameEngine.handleBlockRemove = function(data) {
 	gameEngine.world.clearCell(data.x,data.y);
 };
 
+gameEngine.handleBlockChange = function(data) {
+	gameEngine.log("block changed by other player: "+data.x+","+data.y);
+	gameEngine.world.clearCell(data.x,data.y);
+	var newBlock = gameEngine.BlockFactory({x:data.x,y:data.y,type:data.type});
+	gameEngine.world.push(newBlock.sprite);
+};
+
 //method with drawing-logic - delegates into game-objects
 gameEngine.draw = function() {
 	//clear canvas

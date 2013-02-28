@@ -4,6 +4,7 @@
 		"visible": true,
 		"rotatable": true,
 		"isDiggingTool": true,
+		"canPlantBlocks": true,
 		"range": 20,
 		"sprite": {
 			"minenarbeiter": {

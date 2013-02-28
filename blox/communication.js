@@ -37,6 +37,15 @@ removeBlockHandler = function(player, socket, data) {
 	});
 };
 
+/* handle eine block-änderung */
+changeBlockHandler = function(player, socket, data) {
+	console.log('player +'+player.id+' changes block '+data.x+','+data.y);
+	mapChanges.push({type:'changeblock', data: data});
+	forAllOtherPlayers(socket, function(otherPlayer) {
+	otherPlayer.socket.emit('changeblock', data);
+	});
+};
+
 /* führe ein callback für alle player aus (ausser einem) */
 forAllOtherPlayers = function(mySocket, callback) {
 	for(var i=0;i<players.length;i++) { 
@@ -92,6 +101,7 @@ module.exports.communicationHandler = function(socket) {
 		socket.on('update',function(data) {updateHandler(player, socket, data)});
 		socket.on('disconnect',function(data) {disconnectHandler(player, socket, data)});
 		socket.on('removeblock',function(data) {removeBlockHandler(player, socket, data)});
+		socket.on('changeblock',function(data) {changeBlockHandler(player, socket, data)});
 
 		/* füge neuen player hinzu */
 		players.push(player);

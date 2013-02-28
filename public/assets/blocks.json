@@ -6,21 +6,31 @@
 		"sprite": "dirt.gif",
 		"drops": "dirt",
 		"dropAmount": 4,
-		"dropChance": 0.5
+		"dropChance": 0.5,
+		"replaceable": false
 	},
 	"stone": {
 		"health": 1000,
 		"collision": true,
 		"diggable": true,
-		"sprite": "stone.png"
+		"sprite": "stone.png",
+		"replaceable": false
 	},
 	"grass": {
 		"health": 1000,
 		"collision": true,
 		"diggable": true,
 		"sprite": "grass.gif",
+		"replaceable": false,
 		"drops": "dirt",
 		"dropAmount": 1,
 		"dropChance": 1
+	},
+	"void": {
+		"health": 100000,
+		"collision": false,
+		"diggable": false,
+		"sprite": "void.png",
+		"replaceable": true
 	}
 }

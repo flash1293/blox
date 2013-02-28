@@ -20,7 +20,6 @@ gameEngine.HUDFactory = function(player) {
 
 	player.hasHealthBar = true;
 
-	//small inventory
 	var itemboxcode = "<div id='itembox'>";
 	for(var i=0;i<9;i++) {
 		itemboxcode += "<div id='itembox-"+i+"' class='itemwrapper'></div>";
@@ -36,7 +35,17 @@ gameEngine.HUDFactory = function(player) {
 
 				var html= "<div class='item' style='background-image:url(assets/items/"+item.staticInfo.sprite+")'><div class='amount'>"+item.amount+"</div></div>";
 				$('#itembox-'+i).html(html); 
+			} else {
+				$('#itembox-'+i).html('');
 			}
+
+			if(this.tiedPlayer.selectedItem == i) {
+				$('#itembox-'+i).addClass('selected');
+			} else {
+				$('#itembox-'+i).removeClass('selected');
+			}
+
+
 		}
 	}
 
