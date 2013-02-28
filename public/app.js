@@ -139,6 +139,26 @@ gameEngine.handleBlockChange = function(data) {
 	gameEngine.world.push(newBlock.sprite);
 };
 
+gameEngine.possibleToPlantHere = function(x,y) {
+	var left = gameEngine.world.cell(x-1,y);
+	var right = gameEngine.world.cell(x+1,y);
+	var above = gameEngine.world.cell(x,y-1);
+	var bottom = gameEngine.world.cell(x,y+1);
+	for(var i=0;i<left.length;i++) {
+		if(left[i].block.staticInfo.collision) return true;
+	}
+	for(var i=0;i<right.length;i++) {
+		if(right[i].block.staticInfo.collision) return true;
+	}
+	for(var i=0;i<above.length;i++) {
+		if(above[i].block.staticInfo.collision) return true;
+	}
+	for(var i=0;i<bottom.length;i++) {
+		if(bottom[i].block.staticInfo.collision) return true;
+	}
+	return false;
+}
+
 //method with drawing-logic - delegates into game-objects
 gameEngine.draw = function() {
 	//clear canvas

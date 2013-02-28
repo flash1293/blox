@@ -120,15 +120,27 @@ gameEngine.ToolFactory = function(options, carrier){
 		var item = this.carrier.getCurrentItem();
 		if(this.staticInfo.canPlantBlocks && item !== undefined && item.staticInfo.toBlock !== undefined) {
 			var block = this.getClickedBlock();
-			var collisionBlocks = gameEngine.world.atRect(this.carrier.sprite.rect().shrink(config.hitBoxOffset));
-			for(var i=0;i<collisionBlocks.length;i++) {
-				if(collisionBlocks[i].block == block) {
-					gameEngine.log("you could plant, but player stands in the block..");
-					return;
+			this.playerInBlock = false;
+			gameEngine.players.foreach(function(id, player){
+				var collisionBlocks = gameEngine.world.atRect(player.sprite.rect().shrink(config.hitBoxOffset));
+				for(var i=0;i<collisionBlocks.length;i++) {
+					if(collisionBlocks[i].block == block) {
+						gameEngine.log("you could plant, but player stands in the block..");
+						tool.playerInBlock = true;
+					}
 				}
-			}
+			});
+
+			if(this.playerInBlock) return;
+
 
 			if(block == undefined) return;
+			
+			if(!gameEngine.possibleToPlantHere(block.x,block.y)) {
+				gameEngine.log("you cant plant here - no anchor");
+				return;
+			}
+			
 			if(block.staticInfo.replaceable) {
 				gameEngine.world.clearCell(block.x,block.y);
 				var newBlock = gameEngine.BlockFactory({x:block.x,y:block.y,type:item.staticInfo.toBlock});
