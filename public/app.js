@@ -50,9 +50,6 @@ gameEngine.setup = function() {
 	//add him to the players-list (activate him)
 	this.players[0] = this.player;
 
-	//probably useless
-	jaws.preventDefaultKeys(["up","down","left","right","space"]);
-
 	//initialize viewport-position (probably useless)
 	this.viewport.moveTo(config.startPosX,config.startPosY);
 

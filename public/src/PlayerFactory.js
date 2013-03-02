@@ -142,11 +142,11 @@ gameEngine.PlayerFactory = function(options){
 
 	//user-controlled player
 	player.behavior.keyboard = function() {
-		if(jaws.pressed("left"))  { 
+		if(jaws.pressed("a"))  { 
 			player.markDx = -player.staticInfo.walkSpeed;
 			//player.dx = -player.staticInfo.walkSpeed; 
 		}
-		else if(jaws.pressed("right")) { 
+		else if(jaws.pressed("d")) { 
 			player.markDx = player.staticInfo.walkSpeed;
 			//player.dx = player.staticInfo.walkSpeed; 
 		} else {
@@ -154,7 +154,7 @@ gameEngine.PlayerFactory = function(options){
 			//player.dx = 0;
 		}
 
-		if(jaws.pressed("up")) { 
+		if(jaws.pressed("w")) { 
 			player.markDy = -player.staticInfo.jumpHeight;
 			//player.dy = -player.staticInfo.jumpHeight; 
 			//player.can_jump = false; 
