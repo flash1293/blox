@@ -3,8 +3,8 @@
 var config = {
 	mapWidth: 200, //width of the complete map
 	mapHeight: 100, //height of the complete map
-	viewPortWidth: window.innerWidth, //width of the canvas-els
-	viewPortHeight: window.innerHeight, //height of the canvas-els
+	viewPortWidth: "dynamic", //width of the canvas-els
+	viewPortHeight: "dynamic", //height of the canvas-els
 	startPosX: 20, //start-position of the camera
 	startPosY: 50, //end-position of the camera
 	blockSize: 50, //size of a block in px

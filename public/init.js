@@ -21,8 +21,37 @@ jaws.onload = function() {
 		jaws.assets.add(["assets/"+item]);
 	});
 
+	var canvWidth = config.viewPortWidth;
+	var canvHeight = config.viewPortHeight;
+
+	if(canvWidth == "dynamic") {
+		canvWidth = window.innerWidth;
+	}
+	
+	if(canvHeight == "dynamic") {
+		canvHeight = window.innerHeight;
+	}
+
+	var startOptions = {bgcolor: 'skyblue', width: canvWidth, height: canvHeight};
+	console.log(startOptions);
+
 	//start the engine
-	jaws.start(gameEngine,{bgcolor: 'skyblue', width: config.viewPortWidth, height: config.viewPortHeight});
+	jaws.start(gameEngine,startOptions);
+
+	window.onresize=function(){ 
+		if(config.viewPortWidth == "dynamic") {
+			jaws.canvas.width = window.innerWidth;
+			jaws.width = window.innerWidth;
+			gameEngine.viewport.width = window.innerWidth;
+		}
+		if(config.viewPortHeight == "dynamic") {
+			jaws.canvas.height = window.innerHeight;
+			jaws.height = window.innerHeight;
+			gameEngine.viewport.height = window.innerHeight;
+		}
+		jaws.context = jaws.canvas.getContext("2d"); 
+	};
+
 
 
     }
