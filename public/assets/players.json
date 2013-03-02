@@ -12,7 +12,7 @@
 
 		"walkSpeed": 3,
 
-		"jumpHeight": 15,
+		"jumpHeight": 10,
 
 		"defaultTool": "hand",
 

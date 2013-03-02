@@ -295,6 +295,9 @@ gameEngine.PlayerFactory = function(options){
 		//if the player is influenced by gravity, calculate gravity in the y-movement-vector
 		if(this.staticInfo.gravitable) this.dy += config.gravity;
 
+		this.sprite.x = Math.floor(this.sprite.x);
+		this.sprite.y = Math.floor(this.sprite.y);
+
 	};
 
 	//set back-reference from sprite to player-object
