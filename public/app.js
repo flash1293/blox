@@ -20,6 +20,7 @@ Object.prototype.foreach = function( callback ) {
 //create global main-object
 var gameEngine = {};
 
+
 //setup method - called once
 gameEngine.setup = function() {
 
@@ -59,8 +60,19 @@ gameEngine.setup = function() {
 	//create hud
 	this.hud = gameEngine.HUDFactory(this.player);
 	this.hud.updateItembox();
-	
-	socket.emit('register',{type: gameEngine.player.type, x: config.startPosX, y:config.startPosY});
+
+	var lastChange = gameEngine.get("lastChange") || 0;
+
+
+	if(config.multiplayer) {	
+		socket.emit('register',{type: gameEngine.player.type, x: config.startPosX, y:config.startPosY, lastChange: lastChange});
+	} else {
+		var mapChanges = gameEngine.get("mapChanges") || [];
+		for(var i=0;i<mapChanges.length;i++) {
+			var change = mapChanges[i];
+			gameEngine.handleBlockChange(change);
+		}
+	}
 
 };
 
@@ -93,6 +105,17 @@ gameEngine.isInTolerance = function(a,b) {
 gameEngine.handleInit = function(data) {
 	gameEngine.myId = data.id;
 	gameEngine.log("My ID is "+data.id);
+	var lastChange = gameEngine.get("lastChange") || 0;
+	if(data.startUp > lastChange) {
+		gameEngine.log("server restarted after you left the game (or you've never visited the server), discarding local cache");
+		gameEngine.set("mapChanges",[]);
+	} else {
+		var mapChanges = gameEngine.get("mapChanges") || [];
+		for(var i=0;i<mapChanges.length;i++) {
+			var change = mapChanges[i];
+			gameEngine.handleBlockChange(change);
+		}
+	}
 };
 
 gameEngine.handleUpdate = function(data) {
@@ -131,6 +154,10 @@ gameEngine.handleBlockRemove = function(data) {
 
 gameEngine.handleBlockChange = function(data) {
 	gameEngine.log("block changed by other player: "+data.x+","+data.y);
+	var lastChange = gameEngine.get("lastChange") || 0;
+	if(lastChange < data.ts) {
+		gameEngine.set("lastChange",data.ts);
+	}
 	gameEngine.world.clearCell(data.x,data.y);
 	var newBlock = gameEngine.BlockFactory({x:data.x,y:data.y,type:data.type});
 	gameEngine.world.push(newBlock.sprite);
@@ -175,6 +202,25 @@ gameEngine.log = function(msg) {
 	if(config.debug) {
 		console.log(msg);
 	}
+}
+
+if(localStorage === undefined) {
+	gameEngine.localStorageFake = {};
+	gameEngine.log("no local storage available, using fake");
+}
+
+gameEngine.get = function(key) {
+	if(localStorage !== undefined) {
+		return localStorage.getItem(key);
+	}
+	return gameEngine.localStorageFake[key];
+}
+
+gameEngine.set = function(key,value) {
+	if(localStorage !== undefined) {
+		localStorage.setItem(key,value);
+	}
+	gameEngine.localStorageFake[key] = value;
 }
 
 gameEngine.builder = {};

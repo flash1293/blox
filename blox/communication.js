@@ -5,6 +5,8 @@ var players = [];
 /* liste aller änderungen an der map */
 var mapChanges = [];
 
+var startupDate = Date.now();
+
 /* füge einen deaktivierten default-user ein */
 players.push({id:0, active: false});
 
@@ -73,9 +75,11 @@ module.exports.communicationHandler = function(socket) {
 	socket.on('register', function(data) {
 		console.log("registered");
 
+		var deltaDate = data.lastChange;
+
 		/* erzeuge neuen player und teile teilnehmer seine id mit */
 		var player = { id: players.length, data: data, socket: socket, active: true };
-		socket.emit('init', {id: players.length});
+		socket.emit('init', {id: players.length, startUp: startupDate});
 
 		/* informiere den neuen player über die bisherigen im spiel */
 		forAllPlayers(function(otherPlayer, index) {	
@@ -86,7 +90,9 @@ module.exports.communicationHandler = function(socket) {
 		/* informiere den neuen player über änderungen an der map */
 		for(var i=0;i<mapChanges.length;i++) {
 			var change = mapChanges[i];
-			player.socket.emit(change.type, change.data);
+			if(change.data.ts > deltaDate) {
+				player.socket.emit(change.type, change.data);
+			}
 		}
 
 

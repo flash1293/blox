@@ -105,8 +105,10 @@ gameEngine.ToolFactory = function(options, carrier){
 						socket.emit('changeblock',{
 							x: block.x,
 							y: block.y,
-							type: 'void'
+							type: 'void',
+							ts: Date.now()
 						});
+						gameEngine.set("lastChange",Date.now());
 					}
 					gameEngine.log("you removed block "+block.x+","+block.y);
 				}
@@ -150,7 +152,9 @@ gameEngine.ToolFactory = function(options, carrier){
 						x: block.x,
 						y: block.y,
 						type: item.staticInfo.toBlock
+						ts: Date.now()
 					});
+					gameEngine.set("lastChange",Date.now());
 				}
 				gameEngine.log("you planted block "+block.x+","+block.y);
 				this.carrier.decreaseCurrentItem(1);
