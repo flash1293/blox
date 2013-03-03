@@ -70,7 +70,7 @@ gameEngine.setup = function() {
 		var mapChanges = gameEngine.get("mapChanges") || [];
 		for(var i=0;i<mapChanges.length;i++) {
 			var change = mapChanges[i];
-			gameEngine.handleBlockChange(change);
+			gameEngine.handleBlockChange(change,true);
 		}
 	}
 
@@ -113,7 +113,7 @@ gameEngine.handleInit = function(data) {
 		var mapChanges = gameEngine.get("mapChanges") || [];
 		for(var i=0;i<mapChanges.length;i++) {
 			var change = mapChanges[i];
-			gameEngine.handleBlockChange(change);
+			gameEngine.handleBlockChange(change,true);
 		}
 	}
 };
@@ -152,11 +152,16 @@ gameEngine.handleBlockRemove = function(data) {
 	gameEngine.world.clearCell(data.x,data.y);
 };
 
-gameEngine.handleBlockChange = function(data) {
-	gameEngine.log("block changed by other player: "+data.x+","+data.y);
+gameEngine.handleBlockChange = function(data,cacheIgnore) {
+	gameEngine.log("block changed by "+(cacheIgnore?"cache":"other player")+": "+data.x+","+data.y);
 	var lastChange = gameEngine.get("lastChange") || 0;
 	if(lastChange < data.ts) {
 		gameEngine.set("lastChange",data.ts);
+	}
+	if(!cacheIgnore) {
+		var mapChanges = gameEngine.get("mapChanges") || [];
+		mapChanges.push({x: data.x, y:data.y, type: data.type, ts: Date.now()});
+		gameEngine.set("mapChanges",mapChanges);
 	}
 	gameEngine.world.clearCell(data.x,data.y);
 	var newBlock = gameEngine.BlockFactory({x:data.x,y:data.y,type:data.type});
@@ -211,14 +216,15 @@ if(localStorage === undefined) {
 
 gameEngine.get = function(key) {
 	if(localStorage !== undefined) {
-		return localStorage.getItem(key);
+		return JSON.parse(localStorage.getItem(key));
 	}
 	return gameEngine.localStorageFake[key];
 }
 
 gameEngine.set = function(key,value) {
 	if(localStorage !== undefined) {
-		localStorage.setItem(key,value);
+		localStorage.setItem(key,JSON.stringify(value));
+		return;
 	}
 	gameEngine.localStorageFake[key] = value;
 }

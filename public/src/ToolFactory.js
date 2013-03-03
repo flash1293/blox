@@ -110,6 +110,9 @@ gameEngine.ToolFactory = function(options, carrier){
 						});
 						gameEngine.set("lastChange",Date.now());
 					}
+					var mapChanges = gameEngine.get("mapChanges") || [];
+					mapChanges.push({x: block.x, y:block.y, type: 'void', ts: Date.now()});
+					gameEngine.set("mapChanges",mapChanges);
 					gameEngine.log("you removed block "+block.x+","+block.y);
 				}
 
@@ -151,11 +154,14 @@ gameEngine.ToolFactory = function(options, carrier){
 					socket.emit('changeblock',{
 						x: block.x,
 						y: block.y,
-						type: item.staticInfo.toBlock
+						type: item.staticInfo.toBlock,
 						ts: Date.now()
 					});
 					gameEngine.set("lastChange",Date.now());
 				}
+				var mapChanges = gameEngine.get("mapChanges") || [];
+				mapChanges.push({x: block.x, y:block.y, type: item.staticInfo.toBlock, ts: Date.now()});
+				gameEngine.set("mapChanges",mapChanges);
 				gameEngine.log("you planted block "+block.x+","+block.y);
 				this.carrier.decreaseCurrentItem(1);
 			}

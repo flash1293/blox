@@ -7,7 +7,9 @@
  *
  * */
 gameEngine.BlockFactory = function(options) {
-	block = {};
+	
+	
+	var block = {};
 
 	//save block-coordinates (NOT px-coordinates)
 	block.x = options.x;
