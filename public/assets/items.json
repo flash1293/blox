@@ -1,8 +1,53 @@
 {
 	"dirt": {
-		"sprite": "dirt.gif",
+		"sprite": "dirt.png",
 		"maxAmount": 10,
 		"toBlock": "dirt"
-
-	}
+	},
+	"apple": {
+		"sprite": "apple.png",
+		"maxAmount": 10
+	},
+	"bread": {
+		"sprite": "bread.png",
+		"maxAmount": 10
+	},
+	"coal": {
+		"sprite": "coal.png",
+		"maxAmount": 10
+	},
+	"gold": {
+		"sprite": "gold.png",
+		"maxAmount": 10
+	},
+	"meat": {
+		"sprite": "meat.png",
+		"maxAmount": 10
+	},
+	"silver": {
+		"sprite": "silver.png",
+		"maxAmount": 10
+	},
+	"sulfur": {
+		"sprite": "sulfur.png",
+		"maxAmount": 10
+	},
+	"torch": {
+		"sprite": "torch.png",
+		"maxAmount": 10
+	},
+	"uran": {
+		"sprite": "uran.png",
+		"maxAmount": 10
+	},
+	"wood": {
+		"sprite": "wood.png",
+		"maxAmount": 10,
+		"toBlock": "wood"
+	},
+	"stone": {
+		"sprite": "stone.png",
+		"maxAmount": 10,
+		"toBlock": "stone"
+	},
 }

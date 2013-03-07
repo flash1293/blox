@@ -21,8 +21,8 @@ var config = {
 	//destinated time per frame
 	physicalFrameTime: (1000/60), 
 	multiplayer: true,
-	//host: 'blox.eu01.aws.af.cm:80',
-	host: '192.168.0.15:3000',
+	host: 'blox.eu01.aws.af.cm:80',
+	//host: '192.168.0.15:3000',
 	updateInterval: 50,
 	positionUpdateTolerance: 100,
 	debug: true,
@@ -35,10 +35,19 @@ var config = {
 		"items.json",
 
 		//block-images
-		"blocks/dirt.gif",
-		"blocks/grass.gif",
+		"blocks/dirt.png",
+		"blocks/grass.png",
 		"blocks/stone.png",
 		"blocks/void.png",
+		"blocks/coal.png",
+		"blocks/gold.png",
+		"blocks/ladder.png",
+		"blocks/leaves.png",
+		"blocks/silver.png",
+		"blocks/sulfur.png",
+		"blocks/titan.png",
+		"blocks/uran.png",
+		"blocks/wood.png",
 
 		//player-images
 		"agents/minenarbeiter.png",

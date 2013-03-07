@@ -3,7 +3,7 @@
 		"health": 100,
 		"collision": true,
 		"diggable": true,
-		"sprite": "dirt.gif",
+		"sprite": "dirt.png",
 		"drops": "dirt",
 		"dropAmount": 4,
 		"dropChance": 0.5,
@@ -20,7 +20,7 @@
 		"health": 1000,
 		"collision": true,
 		"diggable": true,
-		"sprite": "grass.gif",
+		"sprite": "grass.png",
 		"replaceable": false,
 		"drops": "dirt",
 		"dropAmount": 1,
@@ -32,5 +32,90 @@
 		"diggable": false,
 		"sprite": "void.png",
 		"replaceable": true
+	},
+	"coal": {
+		"health": 1000,
+		"collision": true,
+		"diggable": true,
+		"sprite": "coal.png",
+		"replaceable": false,
+		"drops": "coal",
+		"dropAmount": 3,
+		"dropChance": 0.5
+	},
+	"gold": {
+		"health": 1000,
+		"collision": true,
+		"diggable": true,
+		"sprite": "gold.png",
+		"replaceable": false,
+		"drops": "coal",
+		"dropAmount": 3,
+		"dropChance": 0.5
+	},
+	"ladder": {
+		"health": 1000,
+		"collision": false,
+		"disableGravity": true,
+		"diggable": true,
+		"sprite": "ladder.png",
+		"replaceable": false,
+		"drops": "ladder",
+		"dropAmount": 1,
+		"dropChance": 1
+	},
+	"leaves": {
+		"health": 1000,
+		"collision": false,
+		"diggable": true,
+		"sprite": "leaves.png",
+		"replaceable": true
+	},
+	"silver": {
+		"health": 1000,
+		"collision": true,
+		"diggable": true,
+		"sprite": "silver.png",
+		"replaceable": false,
+		"drops": "silver",
+		"dropAmount": 1,
+		"dropChance": 1
+	},
+	"sulfur": {
+		"health": 1000,
+		"collision": true,
+		"diggable": true,
+		"sprite": "sulfur.png",
+		"replaceable": false,
+		"drops": "sulfur",
+		"dropAmount": 1,
+		"dropChance": 1
+	},
+	"uran": {
+		"health": 1000,
+		"collision": true,
+		"diggable": true,
+		"sprite": "uran.png",
+		"replaceable": false,
+		"drops": "uran",
+		"dropAmount": 1,
+		"dropChance": 1
+	},
+	"titan": {
+		"health": 1000,
+		"collision": true,
+		"diggable": false,
+		"sprite": "titan.png",
+		"replaceable": false
+	},
+	"wood": {
+		"health": 1000,
+		"collision": true,
+		"diggable": true,
+		"sprite": "wood.png",
+		"replaceable": false,
+		"drops": "wood",
+		"dropAmount": 1,
+		"dropChance": 1
 	}
 }
