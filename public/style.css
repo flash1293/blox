@@ -1,4 +1,8 @@
 
+body {
+	font-family: 'Arial';
+}
+
 #itembox {
 	width: 188px;
 	height: 179px;
@@ -75,3 +79,47 @@
 	background: url(assets/hud/HealthRedDNA.png) top left no-repeat;
 }
 
+
+#chatbox {
+	position:absolute;
+	width: 200px;
+	right:0;
+	top:20%;
+	height: 80%;
+}
+
+
+#chatbox div {
+	font-weight: bold;
+	color: white;
+	font-size: 16px;
+	text-align: right;
+	text-shadow:
+		0 1px 0 black,
+		0 -1px 0 black,
+		1px 0 0 black,
+		-1px 0 0 black;
+	color:#fff;
+	padding-right: 15px;
+}
+
+
+#buttonbox {
+	position: absolute;
+	right: 0;
+	top: 0;
+	width: 50%;
+	padding:10px;
+}
+
+.button {
+	background-color: blue;
+	color: white;
+	border-radius: 10px;
+	float: right;
+	width: 15px;
+	height: 20px;
+	padding: 5px;
+	padding-left: 10px;
+	font-weight: bold;
+}

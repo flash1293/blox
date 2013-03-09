@@ -460,6 +460,10 @@ function resetPressedKeys(e) {
   pressed_keys = {};
 }
 
+jaws.releasePressedKey = function(key) {
+	pressed_keys[key] = false;
+};
+
 /** @private
  * handle event "onkeydown" by remembering what key was pressed
  */
@@ -529,7 +533,9 @@ function handleTouchStart(e) {
 	pressed_keys["left_mouse_button"] = true
 	jaws.mouse_x = e.touches[0].pageX - jaws.canvas.offsetLeft;
 	jaws.mouse_y = e.touches[0].pageY - jaws.canvas.offsetTop;
-	e.preventDefault();
+	if(jaws.mouse_y > config.touchTolerance) {
+		e.preventDefault();
+	}
 }
 
 /** @private

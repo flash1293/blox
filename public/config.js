@@ -21,10 +21,12 @@ var config = {
 	//destinated time per frame
 	physicalFrameTime: (1000/60), 
 	multiplayer: true,
-	host: 'blox.eu01.aws.af.cm:80',
-	//host: '192.168.0.15:3000',
+	//host: 'blox.eu01.aws.af.cm:80',
+	host: '192.168.0.15:3000',
 	updateInterval: 50,
 	positionUpdateTolerance: 100,
+	chatDelay: 10000,
+	touchTolerance: 30,
 	debug: true,
 	//all asset-files being loaded before the game starts
 	assets: [

@@ -51,6 +51,26 @@ gameEngine.HUDFactory = function(player) {
 
 
 	$('body').append(hud.itembox);
+	
+	hud.chatbox = $('<div id="chatbox"></div>');
+
+	$('body').append(hud.chatbox);
+
+
+	hud.addChatMessage = function(sender,message) {
+		var id = 'cm-'+Date.now();
+		var message = $('<div id='+id+'>'+sender+': '+message+'</div>');
+		$('#chatbox').prepend(message);
+		setTimeout(function(){ gameEngine.log("remove chat-message"); $('#'+id).remove();  },config.chatDelay);
+	};
+	
+	hud.buttonbox= $('<div id="buttonbox"></div>');
+
+	$('body').append(hud.buttonbox);
+	
+	var chatButton = $('<div id="chat" class="button">T</div>');
+	$('#buttonbox').append(chatButton);
+	$('#chat').click(player.chat);
 
 	return hud;
 

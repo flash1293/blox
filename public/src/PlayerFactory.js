@@ -172,6 +172,15 @@ gameEngine.PlayerFactory = function(options){
 			player.tool.handlePlantAction();
 		}
 
+
+		if(jaws.pressed("t") && config.multiplayer && !gameEngine.chatBlocked) {
+			jaws.releasePressedKey("t");
+			gameEngine.chatBlocked = true;
+			player.chat();
+		} else {
+			gameEngine.chatBlocked = false;
+		}
+
 		if(jaws.pressed("1")) {
 			player.selectedItem = 0;
 			gameEngine.hud.updateItembox();
@@ -234,6 +243,15 @@ gameEngine.PlayerFactory = function(options){
 		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
 			player.tool.active =  true; 
 			player.tool.handleAction();
+		}
+
+	};
+
+	player.chat = function(ev) {
+		gameEngine.log("entering chat-message");
+		var msg = prompt("Enter Message:","");
+		if(msg) {
+			socket.emit('chat', {player: '#'+gameEngine.myId, msg: msg });
 		}
 	};
 

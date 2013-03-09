@@ -49,5 +49,5 @@
 		"sprite": "stone.png",
 		"maxAmount": 10,
 		"toBlock": "stone"
-	},
+	}
 }

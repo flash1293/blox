@@ -20,7 +20,6 @@ Object.prototype.foreach = function( callback ) {
 //create global main-object
 var gameEngine = {};
 
-
 //setup method - called once
 gameEngine.setup = function() {
 
@@ -167,6 +166,11 @@ gameEngine.handleBlockChange = function(data,cacheIgnore) {
 	var newBlock = gameEngine.BlockFactory({x:data.x,y:data.y,type:data.type});
 	gameEngine.world.push(newBlock.sprite);
 };
+
+gameEngine.handleChat = function(data) {
+	gameEngine.log("received chat message");
+	gameEngine.hud.addChatMessage(data.player,data.msg);
+}
 
 gameEngine.possibleToPlantHere = function(x,y) {
 	var left = gameEngine.world.cell(x-1,y);
