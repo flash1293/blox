@@ -110,7 +110,7 @@
 	},
 	"wood": {
 		"health": 1000,
-		"collision": true,
+		"collision": false,
 		"diggable": true,
 		"sprite": "wood.png",
 		"replaceable": false,

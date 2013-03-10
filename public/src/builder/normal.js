@@ -20,8 +20,52 @@ gameEngine.builder.normal = function(map,conf) {
 			map.push(block.sprite);
 		}
 	}
-	
-	var block = new gameEngine.BlockFactory({x:3, y: 4, type: 'dirt'});
-	map.push(block.sprite);
+
+	//plant the tress
+	this.trees(map,conf);
 	
 };
+
+gameEngine.builder.trees = function(map, conf) {
+
+	gameEngine.log("planting trees");
+
+	var treePos = conf.treeStartPos;
+	var tree = 1;
+
+	while(treePos < config.mapWidth) {
+		//search ground
+		var ground = 0;
+		while(!map.getBlockAt(treePos,ground).staticInfo.collision) {
+			ground++;
+		}
+
+		ground--;
+
+		gameEngine.log("place tree @"+treePos+','+ground);
+
+		map.replaceBlockAt(treePos,ground,'wood');
+		map.replaceBlockAt(treePos,ground-1,'wood');
+		map.replaceBlockAt(treePos,ground-2,'wood');
+		map.replaceBlockAt(treePos,ground-3,'wood');
+		map.replaceBlockAt(treePos,ground-4,'wood');
+		map.replaceBlockAt(treePos,ground-5,'leaves');
+		map.replaceBlockAt(treePos,ground-6,'leaves');
+		map.replaceBlockAt(treePos,ground-7,'leaves');
+		map.replaceBlockAt(treePos+1,ground-5,'leaves');
+		map.replaceBlockAt(treePos+1,ground-6,'leaves');
+		map.replaceBlockAt(treePos+1,ground-7,'leaves');
+		map.replaceBlockAt(treePos-1,ground-5,'leaves');
+		map.replaceBlockAt(treePos-1,ground-6,'leaves');
+		map.replaceBlockAt(treePos-1,ground-7,'leaves');
+		map.replaceBlockAt(treePos-2,ground-6,'leaves');
+		map.replaceBlockAt(treePos+2,ground-6,'leaves');
+		map.replaceBlockAt(treePos,ground-8,'leaves');
+
+
+		treePos += Math.abs(Math.floor(Math.sin(tree)*conf.treeMaxDif))+conf.treeMinDif;
+		tree++;
+	}
+};
+
+

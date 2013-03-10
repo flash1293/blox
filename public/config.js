@@ -16,7 +16,10 @@ var config = {
 		sinLength: 5.5, //alg-specific configs
 		offset: 20,	//...
 		amplitude: 8,
-		stoneLevel: 5
+		stoneLevel: 5,
+		treeStartPos: 5,
+		treeMaxDif: 7,
+		treeMinDif: 2
 	},
 	//destinated time per frame
 	physicalFrameTime: (1000/60), 

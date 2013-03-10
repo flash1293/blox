@@ -29,6 +29,20 @@ gameEngine.setup = function() {
 	//create tilemap for world
 	this.world = new TileMap({size: [config.mapWidth, config.mapHeight], cell_size: [config.blockSize,config.blockSize]});
 
+	this.world.getBlockAt = function(x,y) {
+		var sprites = this.cell(x,y);
+		//gameEngine.log(sprites);
+		for(var i=0;i<sprites.length;i++) {
+			if(sprites[i].block !== undefined) return sprites[i].block;
+		}
+	};
+	
+	this.world.replaceBlockAt = function(x,y,type) {
+		this.clearCell(x,y);
+		var newBlock = gameEngine.BlockFactory({x:x,y:y,type:type});
+		this.push(newBlock.sprite);
+	};
+
 	//call builder to create the world in the tilemap
 	this.builder[config.builder.name](this.world,config.builder);
 
