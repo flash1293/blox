@@ -164,6 +164,8 @@ gameEngine.ToolFactory = function(options, carrier){
 				gameEngine.set("mapChanges",mapChanges);
 				gameEngine.log("you planted block "+block.x+","+block.y);
 				this.carrier.decreaseCurrentItem(1);
+				gameEngine.touchPlace = false;
+				$('#placenow').hide();
 			}
 
 		}

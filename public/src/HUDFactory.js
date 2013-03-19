@@ -22,7 +22,7 @@ gameEngine.HUDFactory = function(player) {
 
 	var itemboxcode = "<div id='itembox'>";
 	for(var i=0;i<9;i++) {
-		itemboxcode += "<div id='itembox-"+i+"' class='itemwrapper'></div>";
+		itemboxcode += "<div id='itembox-"+i+"' class='itemwrapper' data-id='"+i+"'></div>";
 	}
 	itemboxcode += "</div>";
 	hud.itembox = $(itemboxcode);
@@ -32,9 +32,20 @@ gameEngine.HUDFactory = function(player) {
 		for(var i=0;i<9;i++) {
 			var item = this.tiedPlayer.smallInventory[i];
 			if(item !== undefined) {
-
-				var html= "<div class='item' style='background-image:url(assets/items/"+item.staticInfo.sprite+")'><div class='amount'>"+item.amount+"</div></div>";
-				$('#itembox-'+i).html(html); 
+				var html= "<div class=\"item\" style=\"background-image:url(assets/items/"+item.staticInfo.sprite+")\"><div class=\"amount\">"+item.amount+"</div></div>";
+				if($('#itembox-'+i).html() != html) {
+					$('#itembox-'+i).html(html); 
+					$('#itembox-'+i).click(function(ev) { 
+						var i = $(this).data('id');
+						gameEngine.hud.tiedPlayer.selectedItem = i;
+						var item = gameEngine.hud.tiedPlayer.smallInventory[i];
+						gameEngine.hud.updateItembox();
+						if(item.staticInfo["toBlock"] != "") {
+							gameEngine.touchPlace = true;
+							if(gameEngine.hud.tiedPlayer.controllMode == "touch") $('#placenow').show();
+						}
+					}); 
+				}
 			} else {
 				$('#itembox-'+i).html('');
 			}

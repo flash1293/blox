@@ -245,6 +245,11 @@ gameEngine.PlayerFactory = function(options){
 			player.tool.handleAction();
 		}
 
+		if(jaws.pressed("left_mouse_button") && gameEngine.touchPlace && player.tool != undefined) { 
+			player.tool.active =  true; 
+			player.tool.handlePlantAction();
+		}
+
 	};
 
 	player.chat = function(ev) {
