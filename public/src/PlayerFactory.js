@@ -225,15 +225,15 @@ gameEngine.PlayerFactory = function(options){
 		var x = jaws.mouse_x+gameEngine.viewport.x-gameEngine.player.sprite.x;
 		var y = jaws.mouse_y+gameEngine.viewport.y-gameEngine.player.sprite.y;
 
-		if(x < -gameEngine.player.sprite.width/2)  { 
+		if(jaws.pressed("left_mouse_button") && x < -gameEngine.player.sprite.width/2)  { 
 			player.markDx = -player.staticInfo.walkSpeed; 
-		} else if(x > gameEngine.player.sprite.width/2) { 
+		} else if(jaws.pressed("left_mouse_button") && x > gameEngine.player.sprite.width/2) { 
 			player.markDx = player.staticInfo.walkSpeed; 
 		} else {
 			player.markDx = 0;
 		}
 
-		if(y < -gameEngine.player.sprite.height) { 
+		if(jaws.pressed("left_mouse_button") && y < -gameEngine.player.sprite.height) { 
 			player.markDy = -player.staticInfo.jumpHeight; 
 			//player.can_jump = false;
 	        } else {

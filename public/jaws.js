@@ -530,10 +530,10 @@ function handleMouseUp(e) {
  */
 function handleTouchStart(e) {
 	event = (e) ? e : window.event  
-	pressed_keys["left_mouse_button"] = true
-	jaws.mouse_x = e.touches[0].pageX - jaws.canvas.offsetLeft;
-	jaws.mouse_y = e.touches[0].pageY - jaws.canvas.offsetTop;
-	if(jaws.mouse_y > config.touchTolerance) {
+	if((e.touches[0].pageY - jaws.canvas.offsetTop) > config.touchTolerance) {
+		pressed_keys["left_mouse_button"] = true
+		jaws.mouse_x = e.touches[0].pageX - jaws.canvas.offsetLeft;
+		jaws.mouse_y = e.touches[0].pageY - jaws.canvas.offsetTop;
 		e.preventDefault();
 	}
 }
