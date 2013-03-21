@@ -192,16 +192,16 @@ gameEngine.possibleToPlantHere = function(x,y) {
 	var above = gameEngine.world.cell(x,y-1);
 	var bottom = gameEngine.world.cell(x,y+1);
 	for(var i=0;i<left.length;i++) {
-		if(left[i].block.staticInfo.collision) return true;
+		if(left[i].block.staticInfo.isAnchor) return true;
 	}
 	for(var i=0;i<right.length;i++) {
-		if(right[i].block.staticInfo.collision) return true;
+		if(right[i].block.staticInfo.isAnchor) return true;
 	}
 	for(var i=0;i<above.length;i++) {
-		if(above[i].block.staticInfo.collision) return true;
+		if(above[i].block.staticInfo.isAnchor) return true;
 	}
 	for(var i=0;i<bottom.length;i++) {
-		if(bottom[i].block.staticInfo.collision) return true;
+		if(bottom[i].block.staticInfo.isAnchor) return true;
 	}
 	return false;
 }

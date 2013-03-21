@@ -7,14 +7,16 @@
 		"drops": "dirt",
 		"dropAmount": 4,
 		"dropChance": 0.5,
-		"replaceable": false
+		"replaceable": false,
+		"isAnchor": true
 	},
 	"stone": {
 		"health": 1000,
 		"collision": true,
 		"diggable": true,
 		"sprite": "stone.png",
-		"replaceable": false
+		"replaceable": false,
+		"isAnchor": true
 	},
 	"grass": {
 		"health": 1000,
@@ -24,14 +26,16 @@
 		"replaceable": false,
 		"drops": "dirt",
 		"dropAmount": 1,
-		"dropChance": 1
+		"dropChance": 1,
+		"isAnchor": true
 	},
 	"void": {
 		"health": 100000,
 		"collision": false,
 		"diggable": false,
 		"sprite": "void.png",
-		"replaceable": true
+		"replaceable": true,
+		"isAnchor": true
 	},
 	"coal": {
 		"health": 1000,
@@ -41,7 +45,8 @@
 		"replaceable": false,
 		"drops": "coal",
 		"dropAmount": 3,
-		"dropChance": 0.5
+		"dropChance": 0.5,
+		"isAnchor": true
 	},
 	"gold": {
 		"health": 1000,
@@ -51,7 +56,8 @@
 		"replaceable": false,
 		"drops": "coal",
 		"dropAmount": 3,
-		"dropChance": 0.5
+		"dropChance": 0.5,
+		"isAnchor": true
 	},
 	"ladder": {
 		"health": 1000,
@@ -62,14 +68,16 @@
 		"replaceable": false,
 		"drops": "ladder",
 		"dropAmount": 1,
-		"dropChance": 1
+		"dropChance": 1,
+		"isAnchor": true
 	},
 	"leaves": {
 		"health": 1000,
 		"collision": false,
 		"diggable": true,
 		"sprite": "leaves.png",
-		"replaceable": true
+		"replaceable": true,
+		"isAnchor": false
 	},
 	"silver": {
 		"health": 1000,
@@ -79,7 +87,8 @@
 		"replaceable": false,
 		"drops": "silver",
 		"dropAmount": 1,
-		"dropChance": 1
+		"dropChance": 1,
+		"isAnchor": true
 	},
 	"sulfur": {
 		"health": 1000,
@@ -89,7 +98,8 @@
 		"replaceable": false,
 		"drops": "sulfur",
 		"dropAmount": 1,
-		"dropChance": 1
+		"dropChance": 1,
+		"isAnchor": true
 	},
 	"uran": {
 		"health": 1000,
@@ -99,14 +109,16 @@
 		"replaceable": false,
 		"drops": "uran",
 		"dropAmount": 1,
-		"dropChance": 1
+		"dropChance": 1,
+		"isAnchor": true
 	},
 	"titan": {
 		"health": 1000,
 		"collision": true,
 		"diggable": false,
 		"sprite": "titan.png",
-		"replaceable": false
+		"replaceable": false,
+		"isAnchor": true
 	},
 	"wood": {
 		"health": 1000,
@@ -116,6 +128,7 @@
 		"replaceable": false,
 		"drops": "wood",
 		"dropAmount": 1,
-		"dropChance": 1
+		"dropChance": 1,
+		"isAnchor": true
 	}
 }
