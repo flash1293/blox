@@ -35,7 +35,7 @@
 		"diggable": false,
 		"sprite": "void.png",
 		"replaceable": true,
-		"isAnchor": true
+		"isAnchor": false
 	},
 	"coal": {
 		"health": 1000,

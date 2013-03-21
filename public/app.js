@@ -56,6 +56,7 @@ gameEngine.setup = function() {
 	this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: ('ontouchstart' in document.documentElement?'touch':'keyboard')});
 
 	this.player.smallInventory[0] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
+	this.player.smallInventory[1] = gameEngine.ItemFactory({type:"ladder",amount:"5"});
 	this.player.smallInventory[2] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
 	this.player.smallInventory[6] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
 	this.player.smallInventory[7] = gameEngine.ItemFactory({type:"dirt",amount:"10"});

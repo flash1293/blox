@@ -49,5 +49,10 @@
 		"sprite": "stone.png",
 		"maxAmount": 10,
 		"toBlock": "stone"
+	},
+	"ladder": {
+		"sprite": "ladder.png",
+		"maxAmount": 10,
+		"toBlock": "ladder"
 	}
 }

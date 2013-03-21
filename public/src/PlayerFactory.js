@@ -80,6 +80,7 @@ gameEngine.PlayerFactory = function(options){
 				);
 				this.markDxOld = this.markDx;
 				this.markDyOld = this.markDy;
+				gameEngine.log("update!");
 			}
 		}
 	};
@@ -125,7 +126,9 @@ gameEngine.PlayerFactory = function(options){
 		this.dx = this.markDx;
 		if(this.markDy < 0 && this.can_jump) {
 			this.dy = this.markDy;
-			this.can_jump = false;
+			if(!this.isGravityDisabled()) this.can_jump = false;
+		} else if(this.markDy > 0){
+			this.dy = this.markDy;
 		}
 	};
 
@@ -154,12 +157,14 @@ gameEngine.PlayerFactory = function(options){
 			//player.dx = 0;
 		}
 
+		var gravityDisabled = player.isGravityDisabled();
 		if(jaws.pressed("w")) { 
-			player.markDy = -player.staticInfo.jumpHeight;
+			player.markDy = (gravityDisabled ? -player.staticInfo.climbV : -player.staticInfo.jumpHeight);
 			//player.dy = -player.staticInfo.jumpHeight; 
 			//player.can_jump = false; 
 		} else {
-			player.markDy = 0;
+			if(gravityDisabled) player.markDy = player.staticInfo.climbDownV;
+			else player.markDy = 0;
 		}
 
 		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
@@ -232,12 +237,14 @@ gameEngine.PlayerFactory = function(options){
 		} else {
 			player.markDx = 0;
 		}
-
+		
+		var gravityDisabled = player.isGravityDisabled();
 		if(jaws.pressed("left_mouse_button") && y < -gameEngine.player.sprite.height) { 
-			player.markDy = -player.staticInfo.jumpHeight; 
+			player.markDy = (player.isGravityDisabled() ? -player.staticInfo.climbV : -player.staticInfo.jumpHeight); 
 			//player.can_jump = false;
 	        } else {
-			player.markDy = 0;
+	        if(gravityDisabled) player.markDy = player.staticInfo.climbDownV;
+			else player.markDy = 0;
 		}
 
 		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
@@ -266,12 +273,17 @@ gameEngine.PlayerFactory = function(options){
 		this.sprite.draw();
 		if(this.tool != undefined && this.tool.staticInfo.visible) this.tool.draw();
 	};
+	
+	player.isGravityDisabled = function() {
+		var gravityDisabled = false;
+		var collisionBlocks = gameEngine.world.atRect(this.sprite.rect().shrink(config.hitBoxOffset));
+		for(var i=0;i<collisionBlocks.length;i++) { if(collisionBlocks[i].block.staticInfo.disableGravity) gravityDisabled = true; }
+		return gravityDisabled;
+	};
 
 	//moves the player resp. to the movement-vectors and does collision-detection
 	player.move = function() {
-
 		this.sprite.x += this.dx;
-
 
 		//if the player can collide with blocks
 		if(this.staticInfo.collidable) {
@@ -316,7 +328,14 @@ gameEngine.PlayerFactory = function(options){
 		}
 
 		//if the player is influenced by gravity, calculate gravity in the y-movement-vector
-		if(this.staticInfo.gravitable) this.dy += config.gravity;
+		if(this.isGravityDisabled()) {
+			this.can_jump = true;
+			if(this.dy < -this.staticInfo.climbV) this.dy = -this.staticInfo.climbV;
+			else if(this.dy > this.staticInfo.climbDownV) this.dy = this.staticInfo.climbDownV;
+		} else {
+			if(this.staticInfo.gravitable) this.dy += config.gravity;
+		}
+		
 
 		this.sprite.x = Math.floor(this.sprite.x);
 		this.sprite.y = Math.floor(this.sprite.y);
