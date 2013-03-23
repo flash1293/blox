@@ -17,235 +17,296 @@ Object.prototype.foreach = function( callback ) {
 
 
 
-//create global main-object
-var gameEngine = {};
-
-//setup method - called once
-gameEngine.setup = function() {
-
-	//create empty list for active players in the world
-	this.players = {};
-
-	//create tilemap for world
-	this.world = new TileMap({size: [config.mapWidth, config.mapHeight], cell_size: [config.blockSize,config.blockSize]});
-
-	this.world.getBlockAt = function(x,y) {
-		var sprites = this.cell(x,y);
-		//gameEngine.log(sprites);
-		for(var i=0;i<sprites.length;i++) {
-			if(sprites[i].block !== undefined) return sprites[i].block;
-		}
-	};
+/**
+* A class for the main game-controller
+*
+* @module Blox
+* @submodule Controlling
+* @class GameEngine
+*/
+var gameEngine = {
+	/**
+	 * setup method for jaws-link - called once
+	 * @method setup
+	 * */
+	setup: function() {
 	
-	this.world.replaceBlockAt = function(x,y,type) {
-		this.clearCell(x,y);
-		var newBlock = gameEngine.BlockFactory({x:x,y:y,type:type});
-		this.push(newBlock.sprite);
-	};
-
-	//call builder to create the world in the tilemap
-	this.builder[config.builder.name](this.world,config.builder);
-
-	//create viewport for the visible part of the map
-	this.viewport = new jaws.Viewport({
-		max_x: config.mapWidth*config.blockSize, 
-		max_y: config.mapHeight*config.blockSize
-	});
-
-	//create main player (controlled by keyboard)
-	this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: ('ontouchstart' in document.documentElement?'touch':'keyboard')});
-
-	this.player.smallInventory[0] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
-	this.player.smallInventory[1] = gameEngine.ItemFactory({type:"ladder",amount:"5"});
-	this.player.smallInventory[2] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
-	this.player.smallInventory[6] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
-	this.player.smallInventory[7] = gameEngine.ItemFactory({type:"dirt",amount:"10"});
-	this.player.smallInventory[8] = gameEngine.ItemFactory({type:"dirt",amount:"10"});
-
-	//add him to the players-list (activate him)
-	this.players[0] = this.player;
-
-	//initialize viewport-position (probably useless)
-	this.viewport.moveTo(config.startPosX,config.startPosY);
-
-	//timestamp-check for fps-independent game-logic
-	this.lastUpdate = Date.now();
-
-	//create hud
-	this.hud = gameEngine.HUDFactory(this.player);
-	this.hud.updateItembox();
-
-	var lastChange = gameEngine.get("lastChange") || 0;
-
-
-	if(config.multiplayer) {	
-		socket.emit('register',{type: gameEngine.player.type, x: config.startPosX, y:config.startPosY, lastChange: lastChange});
-	} else {
-		var mapChanges = gameEngine.get("mapChanges") || [];
-		for(var i=0;i<mapChanges.length;i++) {
-			var change = mapChanges[i];
-			gameEngine.handleBlockChange(change,true);
-		}
-	}
-
-};
-
-//delegates game-logic, called every frame
-gameEngine.update =  function() {
-	var currentTimeStamp = Date.now();
-	//get independent from game-logic (important for slow pcs and multiplayer)
-	for(var i=this.lastUpdate;i<currentTimeStamp;i=i+config.physicalFrameTime) {
-		//iterate all players 
-		this.players.foreach(function(id, player){
-			//make a descision for next move (input= ki/keyboard/...)
-			player.controll();
-			//move the player resp. to its vector-values (collision-check etc.)
-			player.move();
-			//adjust the used sprite for the player
-			player.adjustDisplayMode();	
+		//create empty list for active players in the world
+		this.players = {};
+	
+		//create tilemap for world
+		this.world = new TileMap({size: [config.mapWidth, config.mapHeight], cell_size: [config.blockSize,config.blockSize]});
+	
+		this.world.getBlockAt = function(x,y) {
+			var sprites = this.cell(x,y);
+			//gameEngine.log(sprites);
+			for(var i=0;i<sprites.length;i++) {
+				if(sprites[i].block !== undefined) return sprites[i].block;
+			}
+		};
+		
+		this.world.replaceBlockAt = function(x,y,type) {
+			this.clearCell(x,y);
+			var newBlock = gameEngine.BlockFactory({x:x,y:y,type:type});
+			this.push(newBlock.sprite);
+		};
+	
+		//call builder to create the world in the tilemap
+		this.builder[config.builder.name](this.world,config.builder);
+	
+		//create viewport for the visible part of the map
+		this.viewport = new jaws.Viewport({
+			max_x: config.mapWidth*config.blockSize, 
+			max_y: config.mapHeight*config.blockSize
 		});
-	}
-	//adjust position of the viewport
-	this.viewport.centerAround(this.player.sprite);
-	//for fps-independet game-logic
-	this.lastUpdate = currentTimeStamp;
-};
-
-gameEngine.isInTolerance = function(a,b) {
-	if(isNaN(a) || isNaN(b)) return false;
-	return Math.abs(a - b) < config.positionUpdateTolerance;
-}
-
-gameEngine.handleInit = function(data) {
-	gameEngine.myId = data.id;
-	gameEngine.log("My ID is "+data.id);
-	var lastChange = gameEngine.get("lastChange") || 0;
-	if(data.startUp > lastChange) {
-		gameEngine.log("server restarted after you left the game (or you've never visited the server), discarding local cache");
-		gameEngine.set("mapChanges",[]);
-	} else {
-		var mapChanges = gameEngine.get("mapChanges") || [];
-		for(var i=0;i<mapChanges.length;i++) {
-			var change = mapChanges[i];
-			gameEngine.handleBlockChange(change,true);
-		}
-	}
-};
-
-gameEngine.handleUpdate = function(data) {
-	gameEngine.log('handle position-update');
-	gameEngine.players[data.id].markDx = data.markDx;
-	gameEngine.players[data.id].markDy = data.markDy;
-
-	gameEngine.players[data.id].sprite.x = data.x;
-
-	if(!gameEngine.isInTolerance(gameEngine.players[data.id].sprite.y, data.y)) {
-		gameEngine.players[data.id].sprite.y = data.y;
-		gameEngine.players[data.id].can_jump = false;
-	}
-};
-
-gameEngine.handleNew = function(data) {
-	if(data.id != gameEngine.myId) {
-		gameEngine.log("add new player #"+data.id);
-		var player = gameEngine.PlayerFactory({x: data.data.x, y: data.data.y, type: data.data.type, controllMode: 'none'});
+	
+		//create main player (controlled by keyboard)
+		this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: ('ontouchstart' in document.documentElement?'touch':'keyboard')});
+	
+		this.player.smallInventory[0] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
+		this.player.smallInventory[1] = gameEngine.ItemFactory({type:"ladder",amount:"5"});
+		this.player.smallInventory[2] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
+		this.player.smallInventory[6] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
+		this.player.smallInventory[7] = gameEngine.ItemFactory({type:"dirt",amount:"10"});
+		this.player.smallInventory[8] = gameEngine.ItemFactory({type:"dirt",amount:"10"});
+	
 		//add him to the players-list (activate him)
-		gameEngine.players[data.id] = player;
-	} else {
-		gameEngine.log("add myself??! hell no");
-	}
-};
-
-gameEngine.handleRemove = function(data) {
-	gameEngine.log("remove player #"+data.id);
-	gameEngine.players[data.id] = undefined;
-};
-
-gameEngine.handleBlockRemove = function(data) {
-	gameEngine.log("block removed by other player: "+data.x+","+data.y);
-	gameEngine.world.clearCell(data.x,data.y);
-};
-
-gameEngine.handleBlockChange = function(data,cacheIgnore) {
-	gameEngine.log("block changed by "+(cacheIgnore?"cache":"other player")+": "+data.x+","+data.y);
-	var lastChange = gameEngine.get("lastChange") || 0;
-	if(lastChange < data.ts) {
-		gameEngine.set("lastChange",data.ts);
-	}
-	if(!cacheIgnore) {
-		var mapChanges = gameEngine.get("mapChanges") || [];
-		mapChanges.push({x: data.x, y:data.y, type: data.type, ts: Date.now()});
-		gameEngine.set("mapChanges",mapChanges);
-	}
-	gameEngine.world.clearCell(data.x,data.y);
-	var newBlock = gameEngine.BlockFactory({x:data.x,y:data.y,type:data.type});
-	gameEngine.world.push(newBlock.sprite);
-};
-
-gameEngine.handleChat = function(data) {
-	gameEngine.log("received chat message");
-	gameEngine.hud.addChatMessage(data.player,data.msg);
-}
-
-gameEngine.possibleToPlantHere = function(x,y) {
-	var left = gameEngine.world.cell(x-1,y);
-	var right = gameEngine.world.cell(x+1,y);
-	var above = gameEngine.world.cell(x,y-1);
-	var bottom = gameEngine.world.cell(x,y+1);
-	for(var i=0;i<left.length;i++) {
-		if(left[i].block.staticInfo.isAnchor) return true;
-	}
-	for(var i=0;i<right.length;i++) {
-		if(right[i].block.staticInfo.isAnchor) return true;
-	}
-	for(var i=0;i<above.length;i++) {
-		if(above[i].block.staticInfo.isAnchor) return true;
-	}
-	for(var i=0;i<bottom.length;i++) {
-		if(bottom[i].block.staticInfo.isAnchor) return true;
-	}
-	return false;
-}
-
-//method with drawing-logic - delegates into game-objects
-gameEngine.draw = function() {
-	//clear canvas
-	jaws.clear();
-	//draw map
-	this.viewport.drawTileMap(this.world);
-
-	//draw players
-	this.viewport.apply( function() {
-		gameEngine.players.foreach(function(key, player) {
-			if(gameEngine.viewport.isPartlyInside(gameEngine.players[key].sprite)) gameEngine.players[key].draw();
+		this.players[0] = this.player;
+	
+		//initialize viewport-position (probably useless)
+		this.viewport.moveTo(config.startPosX,config.startPosY);
+	
+		//timestamp-check for fps-independent game-logic
+		this.lastUpdate = Date.now();
+	
+		//create hud
+		this.hud = gameEngine.HUDFactory(this.player);
+		this.hud.updateItembox();
+	
+		var lastChange = gameEngine.get("lastChange") || 0;
+	
+	
+		if(config.multiplayer) {	
+			socket.emit('register',{type: gameEngine.player.type, x: config.startPosX, y:config.startPosY, lastChange: lastChange});
+		} else {
+			var mapChanges = gameEngine.get("mapChanges") || [];
+			for(var i=0;i<mapChanges.length;i++) {
+				var change = mapChanges[i];
+				gameEngine.handleBlockChange(change,true);
+			}
+		}
+	
+	},
+	/**
+	 * delegates game-logic, called every frame
+	 * @method update
+	 * */
+	update: function() {
+		var currentTimeStamp = Date.now();
+		//get independent from game-logic (important for slow pcs and multiplayer)
+		for(var i=this.lastUpdate;i<currentTimeStamp;i=i+config.physicalFrameTime) {
+			//iterate all players 
+			this.players.foreach(function(id, player){
+				//make a descision for next move (input= ki/keyboard/...)
+				player.controll();
+				//move the player resp. to its vector-values (collision-check etc.)
+				player.move();
+				//adjust the used sprite for the player
+				player.adjustDisplayMode();	
+			});
+		}
+		//adjust position of the viewport
+		this.viewport.centerAround(this.player.sprite);
+		//for fps-independet game-logic
+		this.lastUpdate = currentTimeStamp;
+	},
+	/**
+	 * checks whether a coordinate is in the tolerated zone
+	 * @method isInTolerance
+	 * @param {Integer} coordiante1
+	 * @param {Integer} coordiante2
+	 * @return {Boolean} true if coordiantes are in tolerance
+	 * */
+	isInTolerance: function(a,b) {
+		if(isNaN(a) || isNaN(b)) return false;
+		return Math.abs(a - b) < config.positionUpdateTolerance;
+	},
+	/**
+	 * handles an init-data-package from server
+	 * @method handleInit
+	 * @param {Object} Data sent from the server
+	 * */
+	handleInit: function(data) {
+		gameEngine.myId = data.id;
+		gameEngine.log("My ID is "+data.id);
+		var lastChange = gameEngine.get("lastChange") || 0;
+		if(data.startUp > lastChange) {
+			gameEngine.log("server restarted after you left the game (or you've never visited the server), discarding local cache");
+			gameEngine.set("mapChanges",[]);
+		} else {
+			var mapChanges = gameEngine.get("mapChanges") || [];
+			for(var i=0;i<mapChanges.length;i++) {
+				var change = mapChanges[i];
+				gameEngine.handleBlockChange(change,true);
+			}
+		}
+	},
+	/**
+	 * handles an update-data-package from server
+	 * @method handleUpdate
+	 * @param {Object} Data sent from the server
+	 * */
+	handleUpdate: function(data) {
+		gameEngine.log('handle position-update');
+		gameEngine.players[data.id].markDx = data.markDx;
+		gameEngine.players[data.id].markDy = data.markDy;
+	
+		gameEngine.players[data.id].sprite.x = data.x;
+	
+		if(!gameEngine.isInTolerance(gameEngine.players[data.id].sprite.y, data.y)) {
+			gameEngine.players[data.id].sprite.y = data.y;
+			gameEngine.players[data.id].can_jump = false;
+		}
+	},
+	/**
+	 * handles an new-data-package from server
+	 * @method handleNew
+	 * @param {Object} Data sent from the server
+	 * */
+	handleNew: function(data) {
+		if(data.id != gameEngine.myId) {
+			gameEngine.log("add new player #"+data.id);
+			var player = gameEngine.PlayerFactory({x: data.data.x, y: data.data.y, type: data.data.type, controllMode: 'none'});
+			//add him to the players-list (activate him)
+			gameEngine.players[data.id] = player;
+		} else {
+			gameEngine.log("add myself??! hell no");
+		}
+	},
+	/**
+	 * handles an remove-data-package from server
+	 * @method handleRemove
+	 * @param {Object} Data sent from the server
+	 * */
+	handleRemove: function(data) {
+		gameEngine.log("remove player #"+data.id);
+		gameEngine.players[data.id] = undefined;
+	},
+	/**
+	 * handles an block-remove-data-package from server
+	 * @method handleBlockRemove
+	 * @deprecated
+	 * @param {Object} Data sent from the server
+	 * */
+	handleBlockRemove: function(data) {
+		gameEngine.log("block removed by other player: "+data.x+","+data.y);
+		gameEngine.world.clearCell(data.x,data.y);
+	},
+	/**
+	 * handles an block-data-package from server
+	 * @method handleBlockChange
+	 * @param {Object} Data sent from the server
+	 * */
+	handleBlockChange: function(data,cacheIgnore) {
+		gameEngine.log("block changed by "+(cacheIgnore?"cache":"other player")+": "+data.x+","+data.y);
+		var lastChange = gameEngine.get("lastChange") || 0;
+		if(lastChange < data.ts) {
+			gameEngine.set("lastChange",data.ts);
+		}
+		if(!cacheIgnore) {
+			var mapChanges = gameEngine.get("mapChanges") || [];
+			mapChanges.push({x: data.x, y:data.y, type: data.type, ts: Date.now()});
+			gameEngine.set("mapChanges",mapChanges);
+		}
+		gameEngine.world.clearCell(data.x,data.y);
+		var newBlock = gameEngine.BlockFactory({x:data.x,y:data.y,type:data.type});
+		gameEngine.world.push(newBlock.sprite);
+	},
+	/**
+	 * handles an chat-data-package from server
+	 * @method handleChat
+	 * @param {Object} Data sent from the server
+	 * */
+	handleChat: function(data) {
+		gameEngine.log("received chat message");
+		gameEngine.hud.addChatMessage(data.player,data.msg);
+	},
+	/**
+	 * checks whether its possible to plant a block at a certain position
+	 * @method possibleToPlantHere
+	 * @param {Integer} x The x-coordinate of the block
+	 * @param {Integer} y The y-coordinate of the block
+	 * @return {Boolean} true if it's possible to plant here 
+	 * */
+	possibleToPlantHere: function(x,y) {
+		var left = gameEngine.world.cell(x-1,y);
+		var right = gameEngine.world.cell(x+1,y);
+		var above = gameEngine.world.cell(x,y-1);
+		var bottom = gameEngine.world.cell(x,y+1);
+		for(var i=0;i<left.length;i++) {
+			if(left[i].block.staticInfo.isAnchor) return true;
+		}
+		for(var i=0;i<right.length;i++) {
+			if(right[i].block.staticInfo.isAnchor) return true;
+		}
+		for(var i=0;i<above.length;i++) {
+			if(above[i].block.staticInfo.isAnchor) return true;
+		}
+		for(var i=0;i<bottom.length;i++) {
+			if(bottom[i].block.staticInfo.isAnchor) return true;
+		}
+		return false;
+	},
+	/**
+	 * method with drawing-logic - delegates into game-objects
+	 * @method draw 
+	 * */
+	draw: function() {
+		//clear canvas
+		jaws.clear();
+		//draw map
+		this.viewport.drawTileMap(this.world);
+	
+		//draw players
+		this.viewport.apply( function() {
+			gameEngine.players.foreach(function(key, player) {
+				if(gameEngine.viewport.isPartlyInside(gameEngine.players[key].sprite)) gameEngine.players[key].draw();
+			});
 		});
-	});
+	},
+	/**
+	 * logs a message, default is to console.log
+	 * @method log
+	 * @param {mixed} msg The message to log
+	 * */
+	log: function(msg) {
+		if(config.debug) {
+			console.log(msg);
+		}
+	},
+	localStorageFake: {},
+	/**
+	 * returns a value from the local storage
+	 * @method get
+	 * @param {String} key The key of the wished value
+	 * */	
+	get: function(key) {
+		if(localStorage !== undefined) {
+			return JSON.parse(localStorage.getItem(key));
+		}
+		return gameEngine.localStorageFake[key];
+	},
+	/**
+	 * sets a value in the local storage
+	 * @method set
+	 * @param {String} key The key of the wished value
+	 * @param {mixed} value The value to store
+	 * */	
+	set: function(key,value) {
+		if(localStorage !== undefined) {
+			localStorage.setItem(key,JSON.stringify(value));
+			return;
+		}
+		gameEngine.localStorageFake[key] = value;
+	}
 };
-
-gameEngine.log = function(msg) {
-	if(config.debug) {
-		console.log(msg);
-	}
-}
-
-if(localStorage === undefined) {
-	gameEngine.localStorageFake = {};
-	gameEngine.log("no local storage available, using fake");
-}
-
-gameEngine.get = function(key) {
-	if(localStorage !== undefined) {
-		return JSON.parse(localStorage.getItem(key));
-	}
-	return gameEngine.localStorageFake[key];
-}
-
-gameEngine.set = function(key,value) {
-	if(localStorage !== undefined) {
-		localStorage.setItem(key,JSON.stringify(value));
-		return;
-	}
-	gameEngine.localStorageFake[key] = value;
-}
-
-gameEngine.builder = {};
