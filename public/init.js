@@ -8,13 +8,13 @@ var socket = io.connect('http://'+config.host);
 //if the jaws-lib is loaded
 jaws.onload = function() {
 	
-	socket.on('init', gameEngine.handleInit);
-	socket.on('update', gameEngine.handleUpdate);
-	socket.on('new', gameEngine.handleNew);
-	socket.on('remove', gameEngine.handleRemove);
-	socket.on('removeblock', gameEngine.handleBlockRemove);
-	socket.on('changeblock', gameEngine.handleBlockChange);
-	socket.on('chat', gameEngine.handleChat);
+	socket.on('init', gameEngine.socketHandler.handleInit);
+	socket.on('update', gameEngine.socketHandler.handleUpdate);
+	socket.on('new', gameEngine.socketHandler.handleNew);
+	socket.on('remove', gameEngine.socketHandler.handleRemove);
+	socket.on('removeblock', gameEngine.socketHandler.handleBlockRemove);
+	socket.on('changeblock', gameEngine.socketHandler.handleBlockChange);
+	socket.on('chat', gameEngine.socketHandler.handleChat);
 
 	jaws.unpack(); //unpack it
 	//add all assets from config.js

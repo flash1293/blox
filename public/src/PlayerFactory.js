@@ -25,6 +25,7 @@ gameEngine.Player = function(options) {
 	this.controllMode = options.controllMode;
 	
 	this.behave = gameEngine.controllers[options.controllMode];
+	if(this.behave === undefined) this.behave = function() {};
 
 	//load static info from thiss.json
 	this.staticInfo = jaws.assets.get("assets/players.json")[options.type];
