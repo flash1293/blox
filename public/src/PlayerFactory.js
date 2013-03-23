@@ -1,368 +1,68 @@
-
-/*
- * example options-object:
- * x: x-coordinate
- * y: y-coordinate
- * type: type/name of the player ( loaded from players.json)
- *
- * */
-gameEngine.PlayerFactory = function(options){
-
-	//create player-object
-	var player = {};
-
+/**
+* A class for all active instances in the game
+*
+* @module Blox
+* @submodule Game
+* @class Player
+* @constructor
+* @params {Object} options The options of the player. type: the type of the player, 
+* 	x: the x-coordinate of the player (in px), y: the y-coordinate of the player (in px)
+*/
+gameEngine.Player = function(options) {
 	//initialize movement-vectors
-	player.dx = 0;
-	player.dy = 0;
+	this.dx = 0;
+	this.dy = 0;
 
-	player.type = options.type;
+	this.type = options.type;
 
-	player.smallInventory = new Array(9);
+	this.smallInventory = new Array(9);
 
-	player.selectedItem = 0;
+	this.selectedItem = 0;
 	
-	player.bigInventory = new Array(36);
+	this.bigInventory = new Array(36);
 
-	//set controllmode of the player (keyboard, ki or remote)
-	player.controllMode = options.controllMode;
+	//set controllmode of the this (keyboard, ki or remote)
+	this.controllMode = options.controllMode;
+	
+	this.behave = gameEngine.controllers[options.controllMode];
 
-	//load static info from players.json
-	player.staticInfo = jaws.assets.get("assets/players.json")[options.type];
+	//load static info from thiss.json
+	this.staticInfo = jaws.assets.get("assets/players.json")[options.type];
 
-	player.health = player.staticInfo.health;
+	this.health = this.staticInfo.health;
 
-	//create a sprite-object for the player
-	player.sprite = new jaws.Sprite({
+	//create a sprite-object for the this
+	this.sprite = new jaws.Sprite({
 			x: options.x,
 			y: options.y,
 			anchor: "center_bottom"	
 	});
 
-	//if the player has a default-tool, create it and link it to the player-object
-	if(player.staticInfo.defaultTool != undefined) {
-		player.tool = gameEngine.ToolFactory({type: player.staticInfo.defaultTool, carrier: options.type, x: options.x, y: options.y}, player);
+	//if the this has a default-tool, create it and link it to the this-object
+	if(this.staticInfo.defaultTool != undefined) {
+		this.tool = gameEngine.ToolFactory({type: this.staticInfo.defaultTool, carrier: options.type, x: options.x, y: options.y}, this);
 	}
 
-	//method to determine next move of the player (walk, stand, dig,...)
-	player.controll = function() {
-		//if controllmode keyboard, use the keyboard-behavior
-		if(this.controllMode == "keyboard") {
-			this.behavior.keyboard();
-		}
-		
-		//if controllmode touch...
-		if(this.controllMode == "touch") {
-			this.behavior.touch();
-		}
+	//set back-reference from sprite to this-object
+	this.sprite.player = this;
 
-		//if controllmode ki, use the behavior of the current state ( statemachine)
-		if(this.controllMode == "ki") {
-			this.behavior[this.state]();
-		}
+	//initialize the start-displaymode of the this
+	this.displayMode = this.staticInfo.startDisplayMode;
+	this.oldDisplayMode = this.staticInfo.startDisplayMode;
 
-		this.applyMovement();
-		if(config.multiplayer && this.controllMode != "none") {
-			this.update();
-		}
-	};
-
-	player.update = function() {
-		if(gameEngine.myId != undefined) {
-			if(this.markDx != this.markDxOld || this.markDy != this.markDyOld) {
-				socket.emit('update', 
-					{ 
-						id: gameEngine.myId, 
-						markDx: this.markDx, 
-						markDy: this.markDy, 
-						x: this.sprite.x, 
-						y: this.sprite.y 
-					}
-				);
-				this.markDxOld = this.markDx;
-				this.markDyOld = this.markDy;
-				gameEngine.log("update!");
-			}
-		}
-	};
-
-	player.addItemsToInventory = function(type,amount) {
-		for(var i=0;i<9;i++) {
-			var item = this.smallInventory[i];
-			if(item === undefined) {
-				gameEngine.log("found empty slot, creating new item-stack");
-				this.smallInventory[i] = gameEngine.ItemFactory({type: type, amount: amount});
-				gameEngine.hud.updateItembox();
-				return;
-			}
-			if(item.type == type && Number(item.staticInfo.maxAmount) >= (Number(item.amount) + Number(amount))) {
-				gameEngine.log("found slot with same item-type, adding them up");
-				this.smallInventory[i].amount = Number(this.smallInventory[i].amount) + Number(amount);
-				gameEngine.hud.updateItembox();
-				return;
-			}
-			if(item.type == type) {
-				gameEngine.log("found slot with same item-type, but amount would be too high");
-			}
-		}	
-		gameEngine.log("item got lost because inventory is full");
-	}
-
-	player.getCurrentItem = function() {
-		return this.smallInventory[this.selectedItem];
-	};
-
-	player.decreaseCurrentItem = function(amount) {
-		gameEngine.log("decreasing current item-stack by "+amount);
-		var item = this.getCurrentItem();
-		item.amount = Number(item.amount)-Number(amount);
-		if(item.amount < 1) { 
-			this.smallInventory[this.selectedItem] = undefined; 
-			gameEngine.log("stack is empty, got removed");
-		}
-		gameEngine.hud.updateItembox();
-	};
-
-	player.applyMovement = function() {
-		this.dx = this.markDx;
-		if(this.markDy < 0 && this.can_jump) {
-			this.dy = this.markDy;
-			if(!this.isGravityDisabled()) this.can_jump = false;
-		} else if(this.markDy > 0){
-			this.dy = this.markDy;
-		}
-	};
-
-	player.setHealth = function(value) {
-		this.health = value;
-		gameEngine.log("player-damage:"+value);
-		if(this.hasHealthBar) {
-			gameEngine.hud.setHealthTo(value/this.staticInfo.health);
-		}
-	};
-
-	//create behavior-methods
-	player.behavior = {};
-
-	//user-controlled player
-	player.behavior.keyboard = function() {
-		if(jaws.pressed("a"))  { 
-			player.markDx = -player.staticInfo.walkSpeed;
-			//player.dx = -player.staticInfo.walkSpeed; 
-		}
-		else if(jaws.pressed("d")) { 
-			player.markDx = player.staticInfo.walkSpeed;
-			//player.dx = player.staticInfo.walkSpeed; 
-		} else {
-			player.markDx = 0;
-			//player.dx = 0;
-		}
-
-		var gravityDisabled = player.isGravityDisabled();
-		if(jaws.pressed("w")) { 
-			player.markDy = (gravityDisabled ? -player.staticInfo.climbV : -player.staticInfo.jumpHeight);
-			//player.dy = -player.staticInfo.jumpHeight; 
-			//player.can_jump = false; 
-		} else {
-			if(gravityDisabled) player.markDy = player.staticInfo.climbDownV;
-			else player.markDy = 0;
-		}
-
-		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
-			player.tool.active =  true; 
-			player.tool.handleAction();
-		}
-		
-		if(jaws.pressed("right_mouse_button") && player.tool != undefined) { 
-			player.tool.active =  true; 
-			player.tool.handlePlantAction();
-		}
-
-
-		if(jaws.pressed("t") && config.multiplayer && !gameEngine.chatBlocked) {
-			jaws.releasePressedKey("t");
-			gameEngine.chatBlocked = true;
-			player.chat();
-		} else {
-			gameEngine.chatBlocked = false;
-		}
-
-		if(jaws.pressed("1")) {
-			player.selectedItem = 0;
-			gameEngine.hud.updateItembox();
-		}
-		if(jaws.pressed("2")) {
-			player.selectedItem = 1;
-			gameEngine.hud.updateItembox();
-		}
-		if(jaws.pressed("3")) {
-			player.selectedItem = 2;
-			gameEngine.hud.updateItembox();
-		}
-		if(jaws.pressed("4")) {
-			player.selectedItem = 3;
-			gameEngine.hud.updateItembox();
-		}
-		if(jaws.pressed("5")) {
-			player.selectedItem = 4;
-			gameEngine.hud.updateItembox();
-		}
-		if(jaws.pressed("6")) {
-			player.selectedItem = 5;
-			gameEngine.hud.updateItembox();
-		}
-		if(jaws.pressed("7")) {
-			player.selectedItem = 6;
-			gameEngine.hud.updateItembox();
-		}
-		if(jaws.pressed("8")) {
-			player.selectedItem = 7;
-			gameEngine.hud.updateItembox();
-		}
-		if(jaws.pressed("9")) {
-			player.selectedItem = 8;
-			gameEngine.hud.updateItembox();
-		}
-
-	};
-	
-	//user-controlled player (touch-device)
-	player.behavior.touch = function() {
-		var x = jaws.mouse_x+gameEngine.viewport.x-gameEngine.player.sprite.x;
-		var y = jaws.mouse_y+gameEngine.viewport.y-gameEngine.player.sprite.y;
-
-		if(jaws.pressed("left_mouse_button") && x < -gameEngine.player.sprite.width/2)  { 
-			player.markDx = -player.staticInfo.walkSpeed; 
-		} else if(jaws.pressed("left_mouse_button") && x > gameEngine.player.sprite.width/2) { 
-			player.markDx = player.staticInfo.walkSpeed; 
-		} else {
-			player.markDx = 0;
-		}
-		
-		var gravityDisabled = player.isGravityDisabled();
-		if(jaws.pressed("left_mouse_button") && y < -gameEngine.player.sprite.height) { 
-			player.markDy = (player.isGravityDisabled() ? -player.staticInfo.climbV : -player.staticInfo.jumpHeight); 
-			//player.can_jump = false;
-	        } else {
-	        if(gravityDisabled) player.markDy = player.staticInfo.climbDownV;
-			else player.markDy = 0;
-		}
-
-		if(jaws.pressed("left_mouse_button") && player.tool != undefined) { 
-			player.tool.active =  true; 
-			player.tool.handleAction();
-		}
-
-		if(jaws.pressed("left_mouse_button") && gameEngine.touchPlace && player.tool != undefined) { 
-			player.tool.active =  true; 
-			player.tool.handlePlantAction();
-		}
-
-	};
-
-	player.chat = function(ev) {
-		gameEngine.log("entering chat-message");
-		var msg = prompt("Enter Message:","");
-		if(msg) {
-			socket.emit('chat', {player: '#'+gameEngine.myId, msg: msg });
-		}
-	};
-
-
-	//draws the player and corresponding sprites (tools, blood, etc.)
-	player.draw = function() {
-		this.sprite.draw();
-		if(this.tool != undefined && this.tool.staticInfo.visible) this.tool.draw();
-	};
-	
-	player.isGravityDisabled = function() {
-		var gravityDisabled = false;
-		var collisionBlocks = gameEngine.world.atRect(this.sprite.rect().shrink(config.hitBoxOffset));
-		for(var i=0;i<collisionBlocks.length;i++) { if(collisionBlocks[i].block.staticInfo.disableGravity) gravityDisabled = true; }
-		return gravityDisabled;
-	};
-
-	//moves the player resp. to the movement-vectors and does collision-detection
-	player.move = function() {
-		this.sprite.x += this.dx;
-
-		//if the player can collide with blocks
-		if(this.staticInfo.collidable) {
-			var collisionBlocks = gameEngine.world.atRect(this.sprite.rect().shrink(config.hitBoxOffset));
-			for(var i=0;i<collisionBlocks.length;i++) {
-
-				//if the block is a solid block (causes a collision)
-				if(collisionBlocks[i].block.staticInfo.collision) {
-					this.sprite.x -= this.dx;
-					break;
-				}
-			}
-		}
-			
-		this.sprite.y += this.dy;
-
-		//if the player can collide with blocks
-		if(this.staticInfo.collidable) {
-			var collisionBlocks = gameEngine.world.atRect(this.sprite.rect().shrink(config.hitBoxOffset));
-			for(var i=0;i<collisionBlocks.length;i++) {
-
-				//if the block is a solid block (causes a collision)
-				if(collisionBlocks[i].block.staticInfo.collision) {
-
-					//if player hit the ground
-					if(this.dy > 0) {
-						//it is able to jump
-						this.can_jump = true;
-						this.sprite.y = collisionBlocks[i].rect().y - 1;
-						if(this.staticInfo.fallDamage > 0 && this.staticInfo.fallDamageLimit < this.dy) {
-							var damage = this.dy / 10;
-							damage *= this.staticInfo.fallDamage;
-							this.setHealth(this.health-damage);
-						}
-					} else if(this.dy < 0) {
-						this.sprite.y = collisionBlocks[i].rect().bottom + this.sprite.height;
-					}
-					this.dy = 0;
-					break;
-				}
-			}
-		}
-
-		//if the player is influenced by gravity, calculate gravity in the y-movement-vector
-		if(this.isGravityDisabled()) {
-			this.can_jump = true;
-			if(this.dy < -this.staticInfo.climbV) this.dy = -this.staticInfo.climbV;
-			else if(this.dy > this.staticInfo.climbDownV) this.dy = this.staticInfo.climbDownV;
-		} else {
-			if(this.staticInfo.gravitable) this.dy += config.gravity;
-		}
-		
-
-		this.sprite.x = Math.floor(this.sprite.x);
-		this.sprite.y = Math.floor(this.sprite.y);
-
-	};
-
-	//set back-reference from sprite to player-object
-	player.sprite.player = player;
-
-
-	//initialize the start-displaymode of the player
-	player.displayMode = player.staticInfo.startDisplayMode;
-	player.oldDisplayMode = player.staticInfo.startDisplayMode;
-
-	//if the player is a human (2x1 block hitbox and is walking)
-	if(player.staticInfo.typeClass == "human") {
+	//if the this is a human (2x1 block hitbox and is walking)
+	if(this.staticInfo.typeClass == "human") {
 
 		//create sprite and slice it to modes (stand, walk)
-		var animation = new jaws.Animation({sprite_sheet: "assets/agents/"+player.staticInfo.sprite_sheet, frame_size: [50,100], frame_duration: 200});
-		player.sprite.animations = {};
-		player.sprite.animations.standright = animation.slice(0,1);
-		player.sprite.animations.walkright = animation.slice(1,3);
-		player.sprite.animations.standleft = animation.slice(3,4);
-		player.sprite.animations.walkleft = animation.slice(4);
+		var animation = new jaws.Animation({sprite_sheet: "assets/agents/"+this.staticInfo.sprite_sheet, frame_size: [50,100], frame_duration: 200});
+		this.sprite.animations = {};
+		this.sprite.animations.standright = animation.slice(0,1);
+		this.sprite.animations.walkright = animation.slice(1,3);
+		this.sprite.animations.standleft = animation.slice(3,4);
+		this.sprite.animations.walkleft = animation.slice(4);
 
 		//set the displaymode resp. to movement-vectors and probably adjusts the displaymode of the tool
-		player.adjustDisplayMode = function() {
+		this.adjustDisplayMode = function() {
 			this.oldDisplayMode = this.displayMode;
 			if(this.dx > 0) this.displayMode = 'walkright';
 			if(this.dx < 0) this.displayMode = 'walkleft';
@@ -372,12 +72,236 @@ gameEngine.PlayerFactory = function(options){
 			if(this.tool != undefined) this.tool.adjustDisplayMode();
 		};
 	}
+	this.lastUpdate = Date.now();
+}
 
-	player.lastUpdate = Date.now();
+/**
+* Applies one action-tick of the player (moving, planting, attacking etc.)
+* @method controll
+*/
+gameEngine.Player.prototype.controll = function() {		
+	this.behave();
+	this.applyMovement();
+	if(config.multiplayer && this.controllMode != "none") {
+		this.update();
+	}
+};
+
+/**
+* Populates changes in the controll to the server
+*
+* @method update
+*/
+gameEngine.Player.prototype.update = function() {
+	if(gameEngine.myId === undefined) return;
+	if(this.markDx == this.markDxOld && this.markDy == this.markDyOld) return;
+	socket.emit('update', 
+		{ 
+			id: gameEngine.myId, 
+			markDx: this.markDx, 
+			markDy: this.markDy, 
+			x: this.sprite.x, 
+			y: this.sprite.y 
+		}
+	);
+	this.markDxOld = this.markDx;
+	this.markDyOld = this.markDy;
+	gameEngine.log("update!");
+};
+
+/**
+* Adds an amount of items to the inventory. If there is no place, it gets thrown away
+*
+* @method addItemsToInventory
+* @param {String} type The type of item (e.g. ladder)
+* @param {Integer} amount The amount of *type*-items, e.g. 5
+* @return {Boolean} Returns true on success
+*/
+gameEngine.Player.prototype.addItemsToInventory = function(type,amount) {
+	for(var i=0;i<9;i++) {
+		var item = this.smallInventory[i];
+		if(item === undefined) {
+			gameEngine.log("found empty slot, creating new item-stack");
+			this.smallInventory[i] = gameEngine.ItemFactory({type: type, amount: amount});
+			gameEngine.hud.updateItembox();
+			return true;
+		}
+		if(item.type == type && Number(item.staticInfo.maxAmount) >= (Number(item.amount) + Number(amount))) {
+			gameEngine.log("found slot with same item-type, adding them up");
+			this.smallInventory[i].amount = Number(this.smallInventory[i].amount) + Number(amount);
+			gameEngine.hud.updateItembox();
+			return true;
+		}
+		if(item.type == type) {
+			gameEngine.log("found slot with same item-type, but amount would be too high");
+		}
+	}	
+	gameEngine.log("item got lost because inventory is full");
+	return false;
+};
+
+/**
+* Returns the current selected Item
+*
+* @method getCurrentItem
+* @return {Item} Returns the current selected Item
+*/
+gameEngine.Player.prototype.getCurrentItem = function() {
+	return this.smallInventory[this.selectedItem];
+};
+
+/**
+* Decreases the currently selected item by a specified amount. Updates the HUD
+*
+* @method decreaseCurrentItem
+* @param {Integer} amount The amount which gets decreased
+*/
+gameEngine.Player.prototype.decreaseCurrentItem = function(amount) {
+	gameEngine.log("decreasing current item-stack by "+amount);
+	var item = this.getCurrentItem();
+	item.amount = Number(item.amount)-Number(amount);
+	if(item.amount < 1) { 
+		this.smallInventory[this.selectedItem] = undefined; 
+		gameEngine.log("stack is empty, got removed");
+	}
+	gameEngine.hud.updateItembox();
+};
+
+/**
+* Applies the wished movement to the vectors if possible
+*
+* @method applyMovement
+*/
+gameEngine.Player.prototype.applyMovement = function() {
+	this.dx = this.markDx;
+	if(this.markDy < 0 && this.can_jump) {
+		this.dy = this.markDy;
+		if(!this.isGravityDisabled()) this.can_jump = false;
+	} else if(this.markDy > 0){
+		this.dy = this.markDy;
+	}
+};
+
+/**
+* Sets the health of a player to a specified value
+*
+* @method setHealth
+* @param {Integer} health The new health-value of the player
+*/
+gameEngine.Player.prototype.setHealth = function(value) {
+	this.health = value;
+	gameEngine.log("player-damage:"+value);
+	if(this.hasHealthBar) {
+		gameEngine.hud.setHealthTo(value/this.staticInfo.health);
+	}
+};
+
+/**
+* Prompts a chat-windows and sends the message to the server. Use it as click-handler
+*
+* @method chat
+*/
+gameEngine.Player.prototype.chat = function(ev) {
+	gameEngine.log("entering chat-message");
+	var msg = prompt("Enter Message:","");
+	if(msg) {
+		socket.emit('chat', {player: '#'+gameEngine.myId, msg: msg });
+	}
+};
+
+/**
+* Draws the player using the jaws-Framework. Escalates to tool etc.
+*
+* @method draw
+*/
+gameEngine.Player.prototype.draw = function() {
+	this.sprite.draw();
+	if(this.tool != undefined && this.tool.staticInfo.visible) this.tool.draw();
+};
+	
+/**
+* Checks whether the gravityis disabled for the current player because of ladders etc.
+*
+* @method isGravityDisabled
+*/
+gameEngine.Player.prototype.isGravityDisabled = function() {
+	var gravityDisabled = false;
+	var collisionBlocks = gameEngine.world.atRect(this.sprite.rect().shrink(config.hitBoxOffset));
+	for(var i=0;i<collisionBlocks.length;i++) { if(collisionBlocks[i].block.staticInfo.disableGravity) gravityDisabled = true; }
+	return gravityDisabled;
+};
+
+/**
+* Moves the current player and handles collision etc.
+*
+* @method move
+*/
+gameEngine.Player.prototype.move = function() {
+	this.sprite.x += this.dx;
+
+	//if the player can collide with blocks
+	if(this.staticInfo.collidable) {
+		var collisionBlocks = gameEngine.world.atRect(this.sprite.rect().shrink(config.hitBoxOffset));
+		for(var i=0;i<collisionBlocks.length;i++) {
+
+			//if the block is a solid block (causes a collision)
+			if(collisionBlocks[i].block.staticInfo.collision) {
+				this.sprite.x -= this.dx;
+				break;
+			}
+		}
+	}
+		
+	this.sprite.y += this.dy;
+
+	//if the player can collide with blocks
+	if(this.staticInfo.collidable) {
+		var collisionBlocks = gameEngine.world.atRect(this.sprite.rect().shrink(config.hitBoxOffset));
+		for(var i=0;i<collisionBlocks.length;i++) {
+
+			//if the block is a solid block (causes a collision)
+			if(collisionBlocks[i].block.staticInfo.collision) {
+
+				//if player hit the ground
+				if(this.dy > 0) {
+					//it is able to jump
+					this.can_jump = true;
+					this.sprite.y = collisionBlocks[i].rect().y - 1;
+					if(this.staticInfo.fallDamage > 0 && this.staticInfo.fallDamageLimit < this.dy) {
+						var damage = this.dy / 10;
+						damage *= this.staticInfo.fallDamage;
+						this.setHealth(this.health-damage);
+					}
+				} else if(this.dy < 0) {
+					this.sprite.y = collisionBlocks[i].rect().bottom + this.sprite.height;
+				}
+				this.dy = 0;
+				break;
+			}
+		}
+	}
+
+	//if the player is influenced by gravity, calculate gravity in the y-movement-vector
+	if(this.isGravityDisabled()) {
+		this.can_jump = true;
+		if(this.dy < -this.staticInfo.climbV) this.dy = -this.staticInfo.climbV;
+		else if(this.dy > this.staticInfo.climbDownV) this.dy = this.staticInfo.climbDownV;
+	} else {
+		if(this.staticInfo.gravitable) this.dy += config.gravity;
+	}
+	this.sprite.x = Math.floor(this.sprite.x);
+	this.sprite.y = Math.floor(this.sprite.y);
+};
 
 
-	//return player-object to caller of the factory-method
-	return player;
-
+/**
+* Creates a new player-object and returns it
+*
+* @method PlayerFactory
+* @param {Object} options Options for the player-object
+* @return {Player} Returns a new player-object
+*/
+gameEngine.PlayerFactory = function(options){
+	return new gameEngine.Player(options);
 };
 

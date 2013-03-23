@@ -1,0 +1,13 @@
+{
+    "name": "Blox",
+    "description": "A fun HTML5 Browsergame",
+    "version": "1.0.0",
+    "options": {
+        "linkNatives": "true",        
+        "attributesEmit": "false",
+        "selleck": "false",
+	"exclude":  "jaws.js",
+	"paths": ".",
+        "outdir": "/home/flash2910/Dokumente/Documentations/Blox"
+    }
+}
