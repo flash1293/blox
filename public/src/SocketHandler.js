@@ -22,7 +22,7 @@ gameEngine.socketHandler = {
 			var mapChanges = gameEngine.get("mapChanges") || [];
 			for(var i=0;i<mapChanges.length;i++) {
 				var change = mapChanges[i];
-				gameEngine.handleBlockChange(change,true);
+				gameEngine.socketHandler.handleBlockChange(change,true);
 			}
 		}
 	},

@@ -11,7 +11,7 @@
 		"isAnchor": true
 	},
 	"stone": {
-		"health": 1000,
+		"health": 100,
 		"collision": true,
 		"diggable": true,
 		"sprite": "stone.png",

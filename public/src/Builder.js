@@ -28,8 +28,53 @@ gameEngine.builder = {
 				map.push(block.sprite);
 			}
 		}
+		//dig the caves
+		this.caves(map,conf,'void');
+		//rohstoffe
+		this.caves(map,conf,'coal');
+		this.caves(map,conf,'gold');
+		this.caves(map,conf,'silver');
 		//plant the tress
 		this.trees(map,conf);
+	},
+	/**
+	 * cave-generator. use additional to other generators
+	 * @method trees
+	 * @param {TileMap} map the map-oject to put the blocks in
+	 * @param {Object} conf the configuration for the build-process
+	 * 		seed: seed for random generator
+	 * 		caveAmount: the amount of caves
+	 * 		caveMinLength: the minimal length of a cave
+	 * 		caveMaxLength: the max length of a cave
+	 * @param {String} type the block-type the cave is filled with 
+	 * */	
+	caves: function(map, conf, type) {
+		gen = new gameEngine.RandomGenerator(conf[type+'Seed']);
+		for(var i=0;i<conf[type+'CaveAmount'];i++) {
+			var caveLength = gen.next(conf[type+'CaveMinLength'],conf[type+'CaveMaxLength']);
+			var cavePos = gen.next(0,config.mapWidth-1-caveLength);
+			
+			//search ground
+			var ground = 0;
+			while(!map.getBlockAt(cavePos,ground).staticInfo.collision) {
+				ground++;
+			}
+			ground--;
+			
+			var cavePosY = gen.next(ground,config.mapHeight-3);
+			var currentCaveHeight = 2;
+			
+			for(var j=0;j<caveLength;j++) {
+				for(var k=0;k<currentCaveHeight;k++) {
+					if(cavePosY+k < config.mapHeight) map.replaceBlockAt(cavePos,cavePosY+k,type);
+				}
+				cavePos++;
+				cavePosY += (gen.next(0,3)-2);
+				currentCaveHeight += (gen.next(0,3)-2);
+				if(currentCaveHeight <= 2) currentCaveHeight = 2;
+				if(currentCaveHeight > conf[type+'CaveMaxHeight']) currentCaveHeight = conf[type+'CaveMaxHeight'];
+			}
+		}
 	},
 	/**
 	 * tree-generator. use additional to other generators
