@@ -126,6 +126,7 @@ gameEngine.Tool.prototype.handleAction = function (){
 * @method handlePlantAction
 */
 gameEngine.Tool.prototype.handlePlantAction = function (){
+	var that = this;
 	var item = this.carrier.getCurrentItem();
 	if(this.staticInfo.canPlantBlocks && item !== undefined && item.staticInfo.toBlock !== undefined) {
 		var block = this.getClickedBlock();
@@ -133,11 +134,11 @@ gameEngine.Tool.prototype.handlePlantAction = function (){
 		var targetBlock = jaws.assets.get("assets/blocks.json")[item.staticInfo.toBlock];
 		if(targetBlock.collision) {
 			gameEngine.players.foreach(function(id, player){
-				var collisionBlocks = gameEngine.world.atRect(player.sprite.rect().shrink(config.hitBoxOffset));
+				var collisionBlocks = gameEngine.world.atRect(that.carrier.sprite.rect().shrink(config.hitBoxOffset));
 				for(var i=0;i<collisionBlocks.length;i++) {
 					if(collisionBlocks[i].block == block) {
 						gameEngine.log("you could plant, but player stands in the block..");
-						this.playerInBlock = true;
+						that.playerInBlock = true;
 					}
 				}
 			});
