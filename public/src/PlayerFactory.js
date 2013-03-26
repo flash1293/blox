@@ -234,6 +234,18 @@ gameEngine.Player.prototype.isGravityDisabled = function() {
 };
 
 /**
+* Teleports the player to a certain position
+*
+* @method teleport
+* @param {Integer} x the x-coordinate
+* @param {Integer} y the y-coordinate
+*/
+gameEngine.Player.prototype.teleport = function(x,y) {
+	this.sprite.x = x*config.blockSize;
+	this.sprite.y = y*config.blockSize;
+};
+
+/**
 * Moves the current player and handles collision etc.
 *
 * @method move
