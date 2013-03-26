@@ -97,6 +97,12 @@ var gameEngine = {
 				gameEngine.socketHandler.handleBlockChange(change,true);
 			}
 		}
+		
+		var pos = window.location.hash.substr(1).split(',');
+		if(pos.length == 2) {
+			console.log(pos);
+			this.player.teleport(pos[0],pos[1]);
+		}
 	
 	},
 	/**
