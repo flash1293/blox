@@ -124,7 +124,7 @@ body {
 	font-weight: bold;
 }
 
-#placenow {
+#placenow, #waiting {
 	position:absolute;
 	width: 100%;
 	text-shadow:

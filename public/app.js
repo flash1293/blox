@@ -88,6 +88,8 @@ var gameEngine = {
 	
 		if(config.multiplayer) {	
 			socket.emit('register',{type: gameEngine.player.type, x: config.startPosX, y:config.startPosY, lastChange: lastChange});
+			$('#waiting').show();
+			jaws.game_loop.pause();
 		} else {
 			var mapChanges = gameEngine.get("mapChanges") || [];
 			for(var i=0;i<mapChanges.length;i++) {

@@ -119,6 +119,8 @@ module.exports.communicationHandler = function(socket) {
 				player.socket.emit(change.type, change.data);
 			}
 		}
+		
+		player.socket.emit('changeblock', {loadComplete: true});
 
 
 		/* informiere alle, die schon im spiel sind, über den neuen spieler */

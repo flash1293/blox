@@ -87,12 +87,12 @@ gameEngine.builder = {
 				map.replaceBlockAt(i,j,type);
 			}
 		}
-		//dig the caves
-		this.caves(width, height, map,conf,'void');
 		//rohstoffe
 		this.caves(width, height, map,conf,'coal');
 		this.caves(width, height, map,conf,'gold');
 		this.caves(width, height, map,conf,'silver');
+		//dig the caves
+		this.caves(width, height, map,conf,'void');		
 		//plant the tress
 		this.trees(width, height, map,conf);
 	},
@@ -118,7 +118,7 @@ gameEngine.builder = {
 			while(!map.getBlockAt(cavePos,ground).staticInfo.collision) {
 				ground++;
 			}
-			ground--;
+			ground += conf[type+'CaveOffset'];
 			
 			var cavePosY = gen.next(ground,height-3);
 			var currentCaveHeight = 2;

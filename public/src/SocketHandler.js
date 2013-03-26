@@ -85,6 +85,7 @@ gameEngine.socketHandler = {
 	 * @param {Boolean} indicates whether the data should be written to local caching
 	 * */
 	handleBlockChange: function(data,cacheIgnore) {
+		if(data.loadComplete && config.multiplayer) { jaws.game_loop.unpause(); $('#waiting').hide(); return; }
 		gameEngine.log("block changed by "+(cacheIgnore?"cache":"other player")+": "+data.x+","+data.y);
 		var lastChange = gameEngine.get("lastChange") || 0;
 		if(lastChange < data.ts) {
