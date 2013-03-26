@@ -1,3 +1,4 @@
+gameEngine = gameEngine || {};
 /**
 * Handles the caching
 *

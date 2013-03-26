@@ -1,3 +1,4 @@
+gameEngine = gameEngine || {};
 /**
 * A class for the blocks the map is made of
 *

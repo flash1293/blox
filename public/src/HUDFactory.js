@@ -1,3 +1,4 @@
+gameEngine = gameEngine || {};
 /**
 * A class for the HUD of the active player
 *

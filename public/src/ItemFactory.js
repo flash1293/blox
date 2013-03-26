@@ -1,3 +1,4 @@
+gameEngine = gameEngine || {};
 /**
 * A class for items obtained by a player
 *

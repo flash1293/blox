@@ -14,11 +14,10 @@ players.push({id:0, active: false});
 updateHandler = function(player, socket, data) {
 	player.data.x = data.x;
 	player.data.y = data.y;
-	console.log(Date.now()+':');
-	console.log(data);
 	forAllOtherPlayers(socket, function(otherPlayer) {
 		otherPlayer.socket.emit('update', data);
 	});
+	gameEngine.updatePlayer(player.id,data);
 };
 
 /* handle einen verbindungsabbruch */
@@ -28,6 +27,7 @@ disconnectHandler = function(player, socket, data) {
 	forAllOtherPlayers(socket, function(otherPlayer) {
 		otherPlayer.socket.emit('remove', {id: player.id});
 	});
+	gameEngine.removePlayer(player.id);
 };
 
 /* handle eine block-entfernung */
@@ -43,8 +43,9 @@ removeBlockHandler = function(player, socket, data) {
 changeBlockHandler = function(player, socket, data) {
 	console.log('player #'+player.id+' changes block '+data.x+','+data.y);
 	mapChanges.push({type:'changeblock', data: data});
+	gameEngine.updateBlock(data);
 	forAllOtherPlayers(socket, function(otherPlayer) {
-	otherPlayer.socket.emit('changeblock', data);
+		otherPlayer.socket.emit('changeblock', data);
 	});
 };
 
@@ -54,12 +55,20 @@ chatHandler = function(player, socket, data) {
 	forAllPlayers(function(otherPlayer) {
 		otherPlayer.socket.emit('chat', data);
 	});
+	if(data.msg = "spawn") {
+		var bot = { id: players.length, data: {type: 'minenarbeiter', x: 500, y: 100, controllMode: 'harmless'}, socket: false, active: true, socket: {emit: function(){}} };
+		gameEngine.addPlayer(bot.id,bot.data);
+		forAllPlayers(function(otherPlayer, index) {	 
+			otherPlayer.socket.emit('new', { id: bot.id, data: bot.data }); 
+		});
+		players.push(bot);
+	}
 }
 
 /* führe ein callback für alle player aus (ausser einem) */
 forAllOtherPlayers = function(mySocket, callback) {
 	for(var i=0;i<players.length;i++) { 
-		if(players[i].active && players[i].socket !== mySocket) {
+		if(players[i].active && players[i].socket !== mySocket && players[i].socket != false) {
 			callback(players[i],i);
 		}
 	}
@@ -69,11 +78,18 @@ forAllOtherPlayers = function(mySocket, callback) {
 /* führe ein callback für alle player aus */
 forAllPlayers = function(callback) {
 	for(var i=0;i<players.length;i++) { 
-		if(players[i].active) {
+		if(players[i].active && players[i].socket != false) {
 			callback(players[i],i);
 		}
 	}
 };
+
+var gameEngine = require('./gameengine');
+gameEngine.setEmitter(forAllPlayers);
+
+/*var bot = { id: players.length, data: {type: 'minenarbeiter', x: 500, y: 100, controllMode: 'harmless'}, socket: false, active: true };
+gameEngine.addPlayer(bot.id,bot.data);
+players.push(bot);*/
 
 /* verarbeite ankommende verbindungen */
 module.exports.communicationHandler = function(socket) {
@@ -87,11 +103,12 @@ module.exports.communicationHandler = function(socket) {
 
 		/* erzeuge neuen player und teile teilnehmer seine id mit */
 		var player = { id: players.length, data: data, socket: socket, active: true };
+		player.data.controllMode = "remote";
+		gameEngine.addPlayer(player.id,player.data);
 		socket.emit('init', {id: players.length, startUp: startupDate});
 
 		/* informiere den neuen player über die bisherigen im spiel */
 		forAllPlayers(function(otherPlayer, index) {	
-			console.log('inform new player about #'+index); 
 			player.socket.emit('new', { id: otherPlayer.id, data: otherPlayer.data }); 
 		});
 
@@ -106,7 +123,6 @@ module.exports.communicationHandler = function(socket) {
 
 		/* informiere alle, die schon im spiel sind, über den neuen spieler */
 		forAllPlayers(function(otherPlayer, index) {
-			console.log('inform '+index+' about new player');
 			otherPlayer.socket.emit('new', {id: player.id, data: player.data  } ); 
 		});
 

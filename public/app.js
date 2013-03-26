@@ -52,7 +52,7 @@ var gameEngine = {
 		};
 	
 		//call builder to create the world in the tilemap
-		this.builder[config.builder.name](this.world,config.builder);
+		this.builder[config.builder.name](config.mapWidth, config.mapHeight, this.world,config.builder);
 	
 		//create viewport for the visible part of the map
 		this.viewport = new jaws.Viewport({

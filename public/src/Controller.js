@@ -1,4 +1,4 @@
-
+gameEngine = gameEngine || {};
 /**
 * Controllers for different input-types (keyboard/touch etc.)
 *

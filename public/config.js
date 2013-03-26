@@ -45,7 +45,7 @@ var config = {
 	physicalFrameTime: (1000/60), 
 	multiplayer: true,
 	//host: 'blox.eu01.aws.af.cm:80',
-	host: '192.168.0.15:3000',
+	host: '127.0.0.1:3000',
 	updateInterval: 50,
 	positionUpdateTolerance: 100,
 	chatDelay: 10000,
@@ -82,3 +82,5 @@ var config = {
 
 	]
 };
+
+if(typeof module !== "undefined" && ('exports' in module)) { module.exports = config }

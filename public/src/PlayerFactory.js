@@ -1,3 +1,4 @@
+gameEngine = gameEngine || {};
 /**
 * A class for all active instances in the game
 *

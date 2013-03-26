@@ -1,3 +1,4 @@
+gameEngine = gameEngine || {};
 /**
 * A class for the tools of the players
 *
