@@ -51,7 +51,7 @@ gameEngine.controllers = {
 	
 	
 		//handle chat
-		if(jaws.pressed("t") && config.multithis && !gameEngine.chatBlocked) {
+		if(jaws.pressed("t") && config.multiplayer && !gameEngine.chatBlocked) {
 			jaws.releasePressedKey("t");
 			gameEngine.chatBlocked = true;
 			this.chat();
