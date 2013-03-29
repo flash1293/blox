@@ -56,12 +56,12 @@ gameEngine.Player = function(options) {
 	if(this.staticInfo.typeClass == "human") {
 
 		//create sprite and slice it to modes (stand, walk)
-		var animation = new jaws.Animation({sprite_sheet: "assets/agents/"+this.staticInfo.sprite_sheet, frame_size: [50,100], frame_duration: 200});
+		var animation = new jaws.Animation({sprite_sheet: "assets/agents/"+this.staticInfo.sprite_sheet, frame_size: [50,100], frame_duration: 100});
 		this.sprite.animations = {};
 		this.sprite.animations.standright = animation.slice(0,1);
-		this.sprite.animations.walkright = animation.slice(1,3);
-		this.sprite.animations.standleft = animation.slice(3,4);
-		this.sprite.animations.walkleft = animation.slice(4);
+		this.sprite.animations.walkright = animation.slice(1,7);
+		this.sprite.animations.standleft = animation.slice(7,8);
+		this.sprite.animations.walkleft = animation.slice(8);
 
 		//set the displaymode resp. to movement-vectors and probably adjusts the displaymode of the tool
 		this.adjustDisplayMode = function() {
