@@ -1,16 +1,17 @@
 extends layout
 
 block content
-	h1= title
-	ul
-		if single
-			li
-				a(href='/singleplayer') Singleplayer
-		if multi
-			li
-				a(href='/multiplayer') Multiplayer		
-	h2 Gespeicherte Maps
-	ul
-		each map in maps
-			li
-				a(href='/visit?name=#{map}')= map
+	div.container
+		h1= title
+		ul
+			if single
+				li
+					a(href='/singleplayer') Singleplayer
+			if multi
+				li
+					a(href='/multiplayer') Multiplayer		
+		h2 Gespeicherte Maps
+		ul
+			each map in maps
+				li
+					a(href='/visit?name=#{map}')= map
