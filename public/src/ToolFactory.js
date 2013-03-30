@@ -94,6 +94,7 @@ gameEngine.Tool.prototype.adjustDisplayMode = function() {
 * @method handleAction
 */
 gameEngine.Tool.prototype.handleAction = function (){
+	if(!config.allowDigging) return;
 	if(this.staticInfo.isDiggingTool) {
 		var block = this.getClickedBlock();
 		if(block == undefined) return;
@@ -127,6 +128,7 @@ gameEngine.Tool.prototype.handleAction = function (){
 * @method handlePlantAction
 */
 gameEngine.Tool.prototype.handlePlantAction = function (){
+	if(!config.allowPlanting) return;
 	var that = this;
 	var item = this.carrier.getCurrentItem();
 	if(this.staticInfo.canPlantBlocks && item !== undefined && item.staticInfo.toBlock !== undefined) {

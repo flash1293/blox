@@ -9,3 +9,8 @@ block content
 		if multi
 			li
 				a(href='/multiplayer') Multiplayer		
+	h2 Gespeicherte Maps
+	ul
+		each map in maps
+			li
+				a(href='/visit?name=#{map}')= map

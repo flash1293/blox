@@ -6,6 +6,8 @@ block content
 	<!-- load dependencies -->
 	script(src="jquery.js")
 	script(type="text/javascript")!= config
+	if delta
+		script(type="text/javascript")!= delta
 	script(src="jaws.js")
 	script(src="app.js")
 	script(src="src/Controller.js")
@@ -18,5 +20,6 @@ block content
 	script(src="src/SocketHandler.js")
 	script(src="src/CacheHandler.js")
 	script(src="src/RandomGenerator.js")
-	script(src="/socket.io/socket.io.js")
+	if multi
+		script(src="/socket.io/socket.io.js")
 	script(src="init.js")

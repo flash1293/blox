@@ -52,6 +52,10 @@
 	"positionUpdateTolerance": 100,
 	"chatDelay": 10000,
 	"touchTolerance": 30,
+	"storePrefix": "blox",
+	"storeKey": "server01",
+	"allowDigging": true,
+	"allowPlanting": true,
 	"debug": true,
 	"assets": [
 		"players.json",

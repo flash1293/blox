@@ -7,13 +7,21 @@ Object.size = function(obj) {
 	return size;
 };
 
-Object.prototype.foreach = function( callback ) {
-    for( var k in this ) {
-        if(this.hasOwnProperty(k) && this[k] != undefined) {
-           callback( k, this[ k ] );
-        }
-    }
-}
+Object.defineProperty(
+	Object.prototype,
+	'foreach',
+	{
+		writable: false,
+		enumerable: false,
+		configurable: false,
+		value: function( callback ) {
+		    for( var k in this ) {
+		        if(this.hasOwnProperty(k) && this[k] != undefined) {
+		           callback( k, this[ k ] );
+		        }
+		    }
+	   }
+});
 
 
 
@@ -91,11 +99,12 @@ var gameEngine = {
 			$('#waiting').show();
 			jaws.game_loop.pause();
 		} else {
-			var mapChanges = gameEngine.get("mapChanges") || [];
-			for(var i=0;i<mapChanges.length;i++) {
-				var change = mapChanges[i];
-				gameEngine.socketHandler.handleBlockChange(change,true);
+			if(typeof mapDelta != "undefined") {
+				var mapChanges = mapDelta || [];
+				gameEngine.applyMapDelta(mapChanges);
 			}
+			var mapChanges = gameEngine.get("mapChanges") || [];
+			gameEngine.applyMapDelta(mapChanges);
 		}
 		
 		var pos = window.location.hash.substr(1).split(',');
@@ -104,6 +113,24 @@ var gameEngine = {
 			this.player.teleport(pos[0],pos[1]);
 		}
 	
+	},
+	applyMapDelta: function(mapChanges) {
+		for(var i=0;i<mapChanges.length;i++) {
+				var change = mapChanges[i];
+				gameEngine.socketHandler.handleBlockChange(change,true);
+			}
+	},
+	shareMap: function() {
+		var mapName = prompt("What's the name of your map?");
+		$.ajax({
+			url: "/store",
+			type: "post",
+			data: {
+				name: mapName,
+				delta: JSON.stringify(gameEngine.get('mapChanges'))
+			},
+			success: function() {alert('Upload complete!');}
+		});
 	},
 	/**
 	 * delegates game-logic, called every frame

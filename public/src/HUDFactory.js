@@ -33,6 +33,11 @@ gameEngine.HUD = function(player) {
 	var chatButton = $('<div id="chat"></div>').addClass("button").html("T");
 	chatButton.click(player.chat);
 	this.buttonbox.append(chatButton);
+	if(!config.multiplayer) {
+		var shareButton = $('<div id="share"></div>').addClass("button").html("S");
+		shareButton.click(gameEngine.shareMap);
+		this.buttonbox.append(shareButton);
+	}
 	container.push(this.buttonbox);
 	
 	//append all containers to body
