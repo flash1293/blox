@@ -1,10 +1,18 @@
-Object.prototype.foreach = function( callback ) {
-    for( var k in this ) {
-        if(this.hasOwnProperty(k) && this[k] != undefined) {
-           callback( k, this[ k ] );
-        }
-    }
-}
+Object.defineProperty(
+	Object.prototype,
+	'foreach',
+	{
+		writable: false,
+		enumerable: false,
+		configurable: false,
+		value: function( callback ) {
+	    for( var k in this ) {
+	        if(this.hasOwnProperty(k) && this[k] != undefined) {
+	           callback( k, this[ k ] );
+	        }
+	    }
+   }
+});
 
 var saws = require('./saws');
 var builder = require('../public/src/Builder');

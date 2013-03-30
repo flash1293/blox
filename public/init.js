@@ -1,5 +1,7 @@
-
-var socket = io.connect('http://'+config.host);
+var socket = {};
+if(config.multiplayer) {
+	socket = io.connect('http://'+config.host);
+}
 /*socket.on('news', function (data) {
 	console.log(data);
 	socket.emit('my other event', { my: 'data' });
@@ -8,13 +10,15 @@ var socket = io.connect('http://'+config.host);
 //if the jaws-lib is loaded
 jaws.onload = function() {
 	
-	socket.on('init', gameEngine.socketHandler.handleInit);
-	socket.on('update', gameEngine.socketHandler.handleUpdate);
-	socket.on('new', gameEngine.socketHandler.handleNew);
-	socket.on('remove', gameEngine.socketHandler.handleRemove);
-	socket.on('removeblock', gameEngine.socketHandler.handleBlockRemove);
-	socket.on('changeblock', gameEngine.socketHandler.handleBlockChange);
-	socket.on('chat', gameEngine.socketHandler.handleChat);
+	if(config.multiplayer) {
+		socket.on('init', gameEngine.socketHandler.handleInit);
+		socket.on('update', gameEngine.socketHandler.handleUpdate);
+		socket.on('new', gameEngine.socketHandler.handleNew);
+		socket.on('remove', gameEngine.socketHandler.handleRemove);
+		socket.on('removeblock', gameEngine.socketHandler.handleBlockRemove);
+		socket.on('changeblock', gameEngine.socketHandler.handleBlockChange);
+		socket.on('chat', gameEngine.socketHandler.handleChat);
+	}
 
 	jaws.unpack(); //unpack it
 	//add all assets from config.js

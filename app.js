@@ -7,7 +7,8 @@ var express = require('express'),
     http = require('http'),
     app = express(),
     server = http.createServer(app),
-    io = require('socket.io').listen(server);
+    io = require('socket.io').listen(server),
+    config = require('./public/config.json');
 
 app.configure(function(){
   app.set('port', process.env.PORT || 3000);
@@ -23,6 +24,20 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.use(express.errorHandler());
+});
+
+app.get('/', function(req, res){
+	res.render('index',{single: config.enableSingleplayer, multi: config.enableMultiplayer, title: 'Blox'});
+});
+
+app.get('/singleplayer', function(req, res){
+	config.multiplayer = false;
+	res.render('single',{config: require('./blox/configloader')(config), title: 'Blox'});
+});
+
+app.get('/multiplayer', function(req, res){
+	config.multiplayer = true;
+	res.render('multi',{config: require('./blox/configloader')(config), title: 'Blox'});
 });
 
 server.listen(app.get('port'), function(){

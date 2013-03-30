@@ -1,0 +1,11 @@
+extends layout
+
+block content
+	h1= title
+	ul
+		if single
+			li
+				a(href='/singleplayer') Singleplayer
+		if multi
+			li
+				a(href='/multiplayer') Multiplayer		
