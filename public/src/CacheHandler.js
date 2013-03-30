@@ -17,7 +17,7 @@ if(localStorage === undefined) {
  * */	
 gameEngine.get = function(key) {
 	if(localStorage !== undefined) {
-		return JSON.parse(localStorage.getItem(key));
+		return JSON.parse(localStorage.getItem((config.multiplayer ? "mp_ ":"sp_")+key));
 	}
 	return gameEngine.localStorageFake[key];
 };
@@ -29,7 +29,7 @@ gameEngine.get = function(key) {
  * */	
 gameEngine.set = function(key,value) {
 	if(localStorage !== undefined) {
-		localStorage.setItem(key,JSON.stringify(value));
+		localStorage.setItem((config.multiplayer ? "mp_ ":"sp_")+key,JSON.stringify(value));
 		return;
 	}
 	gameEngine.localStorageFake[key] = value;
