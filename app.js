@@ -35,6 +35,8 @@ app.get('/', function(req, res){
 
 app.get('/singleplayer', function(req, res){
 	config.multiplayer = false;
+	config.allowDigging = true;
+	config.allowPlanting = true;
 	res.render('game',{config: require('./blox/configloader')(config), delta: null, multi: false, title: 'Blox'});
 });
 
@@ -49,6 +51,8 @@ app.get('/visit', function(req, res){
 
 app.get('/multiplayer', function(req, res){
 	config.multiplayer = true;
+	config.allowDigging = true;
+	config.allowPlanting = true;
 	res.render('game',{config: require('./blox/configloader')(config), delta: null, multi: true, title: 'Blox'});
 });
 

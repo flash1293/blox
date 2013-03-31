@@ -102,9 +102,10 @@ var gameEngine = {
 			if(typeof mapDelta != "undefined") {
 				var mapChanges = mapDelta || [];
 				gameEngine.applyMapDelta(mapChanges);
+			} else {
+				var mapChanges = gameEngine.get("mapChanges") || [];
+				gameEngine.applyMapDelta(mapChanges);
 			}
-			var mapChanges = gameEngine.get("mapChanges") || [];
-			gameEngine.applyMapDelta(mapChanges);
 		}
 		
 		var pos = window.location.hash.substr(1).split(',');
