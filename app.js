@@ -53,12 +53,24 @@ app.get('/multiplayer', function(req, res){
 });
 
 app.post('/store', function(req, res){
-	var mapDelta = req.body.delta;
-	var mapName = req.body.name;
-	console.log("storing "+mapName+"-delta");
-	store.set("singleMaps:delta:"+mapName,mapDelta);
-	store.lpush("singleMaps:list",mapName);
-	res.json({'ok': true});
+	console.log("checking store-status for ip "+req.ip);
+	store.lock(req.ip, function(){
+		var mapDelta = req.body.delta;
+		var mapName = req.body.name.replace(/[^a-zA-Z0-9]/g,'_').substr(0,20);
+		console.log("storing "+mapName+"-delta");
+		store.tryToSet("singleMaps:delta:"+mapName,mapDelta,function(){
+			store.lpush("singleMaps:list",mapName);
+			res.json({'ok': true});
+		},function() {
+			console.log("map-name alert for "+req.ip);
+			res.json({'ok': false, 'msg': 'Name is already taken'});
+		});
+	},
+	function() {
+		console.log("lock alert for "+req.ip);
+		res.json({'ok': false, 'msg': 'Only one upload in 24hours'});
+	});
+	
 });
 
 server.listen(app.get('port'), function(){

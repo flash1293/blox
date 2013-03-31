@@ -129,7 +129,14 @@ var gameEngine = {
 				name: mapName,
 				delta: JSON.stringify(gameEngine.get('mapChanges'))
 			},
-			success: function() {alert('Upload complete!');}
+			success: function(data) {
+				var status = data;
+				if(status.ok) {
+					alert('Upload complete!');
+				} else {
+					alert(status.msg);
+				}
+			}
 		});
 	},
 	/**

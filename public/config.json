@@ -47,6 +47,7 @@
 	"multiplayer": true,
 	"enableMultiplayer": true,
 	"enableSingleplayer": true,
+	"shareInterval": 86400000,
 	"host": "127.0.0.1:3000",
 	"updateInterval": 50,
 	"positionUpdateTolerance": 100,
