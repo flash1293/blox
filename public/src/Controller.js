@@ -102,19 +102,19 @@ gameEngine.controllers = {
 	* @method touch
 	*/
 	touch:function() {
-		var x = jaws.mouse_x+gameEngine.viewport.x-gameEngine.this.sprite.x;
-		var y = jaws.mouse_y+gameEngine.viewport.y-gameEngine.this.sprite.y;
+		var x = jaws.mouse_x+gameEngine.viewport.x-this.sprite.x;
+		var y = jaws.mouse_y+gameEngine.viewport.y-this.sprite.y;
 
-		if(jaws.pressed("left_mouse_button") && x < -gameEngine.this.sprite.width/2)  { 
+		if(jaws.pressed("left_mouse_button") && x < -this.sprite.width/2)  { 
 			this.markDx = -this.staticInfo.walkSpeed; 
-		} else if(jaws.pressed("left_mouse_button") && x > gameEngine.this.sprite.width/2) { 
+		} else if(jaws.pressed("left_mouse_button") && x > this.sprite.width/2) { 
 			this.markDx = this.staticInfo.walkSpeed; 
 		} else {
 			this.markDx = 0;
 		}
 		
 		var gravityDisabled = this.isGravityDisabled();
-		if(jaws.pressed("left_mouse_button") && y < -gameEngine.this.sprite.height) { 
+		if(jaws.pressed("left_mouse_button") && y < -this.sprite.height) { 
 			this.markDy = (this.isGravityDisabled() ? -this.staticInfo.climbV : -this.staticInfo.jumpHeight); 
 			//this.can_jump = false;
 	        } else {
