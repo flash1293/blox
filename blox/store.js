@@ -1,6 +1,15 @@
 var redis  = require("redis"),
-    client = redis.createClient(),
+	client = {},
     config = require('../public/config.json');
+    
+if(process.env.VCAP_SERVICES != undefined) {
+	var services = JSON.parse(process.env.VCAP_SERVICES);
+	var redisConfig = services["redis-2.2"][0]['credentials'];
+	client = redis.createClient(redisConfig.port,redisConfig.hostName)
+	client.auth(redisConfig.password, function() {});
+} else {
+	client = redis.createClient();
+}
     
 var getPrefix = function(global) {
 	return config.storePrefix+':'+(global ? "" : config.storeKey+':');
