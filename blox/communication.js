@@ -55,6 +55,7 @@ chatHandler = function(player, socket, data) {
 	forAllPlayers(function(otherPlayer) {
 		otherPlayer.socket.emit('chat', data);
 	});
+	/* später auslagern in mod-chain
 	if(data.msg = "spawn") {
 		var bot = { id: players.length, data: {type: 'minenarbeiter', x: 500, y: 100, controllMode: 'harmless'}, socket: false, active: true, socket: {emit: function(){}} };
 		gameEngine.addPlayer(bot.id,bot.data);
@@ -62,7 +63,7 @@ chatHandler = function(player, socket, data) {
 			otherPlayer.socket.emit('new', { id: bot.id, data: bot.data }); 
 		});
 		players.push(bot);
-	}
+	}*/
 }
 
 /* führe ein callback für alle player aus (ausser einem) */
