@@ -17,6 +17,7 @@ Object.defineProperty(
 var saws = require('./saws');
 var builder = require('../public/src/Builder');
 var config = require('../public/config');
+var modController = require('./modcontroller');
 var contents = {
 	players: require('../public/assets/players.json'),
 	tools: require('../public/assets/tools.json'),
@@ -26,6 +27,8 @@ var lastUpdate = Date.now();
 var players = {};
 var world = new saws.TileMap({size: [config.mapWidth, config.mapHeight], cell_size: [config.blockSize,config.blockSize]});
 var socketEmitter = {};
+var playerHandler = {};
+var mods = [];
 
 world.getBlockAt = function(x,y) {
 	var sprites = this.cell(x,y);
@@ -190,6 +193,7 @@ function IntPlayer(options) {
 
 setInterval(function() {
 	var currentTimeStamp = Date.now();
+	modController.trigger("tick",{});
 	for(var i=lastUpdate;i<currentTimeStamp;i=i+config.physicalFrameTime) {
 		players.foreach(function(id, player){
 			if(player.controllMode != "remote") {
@@ -206,20 +210,50 @@ setInterval(function() {
 
 module.exports = {
 	addPlayer: function(id,player) {
+		modController.trigger("addPlayer",{id: id, player: player});
 		var newPlayer = new IntPlayer(player);
 		newPlayer.myId = id;
 		players[id] = newPlayer;
 	},
 	removePlayer: function(id) {
+		modController.trigger("deletePlayer",{id: id});
  		delete players[id];
 	},
 	updatePlayer: function(id,data) {
+		modController.trigger("updatePlayer",{id: id, data: data});
 		players[id].setData(data);
 	},
 	updateBlock: function(data) {
+		modController.trigger("updateBlock",{data: data});
 		world.replaceBlockAt(data.x, data.y, data.type);
+	},
+	chat: function(data) {
+		modController.trigger("chat",{id: data.id, msg: data.msg});
 	},
 	setEmitter: function(emitter) {
 		socketEmitter = emitter;
+	},
+	setPlayerHandler: function(ph) {
+		playerHandler = ph;
+	},
+	createBot: function(data) {
+		playerHandler.createBot(data);
+	}
+};
+
+
+for(var i=0;i<config.mods.length;i++) {
+	var mod = require('./mods/mod_'+config.mods[i]);
+	mod.setEmitter(socketEmitter);
+	mod.setGameEngine(module.exports);
+	console.log("enabling mod "+config.mods[i]);
+	mods.push(mod);
+}
+
+var modController = {
+	trigger: function(eventName, data) {
+		for(var i=0;i<config.mods.length;i++) {
+			mods[i][eventName](data);
+		}
 	}
 };

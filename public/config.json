@@ -49,6 +49,9 @@
 	"enableSingleplayer": true,
 	"shareInterval": 86400000,
 	"host": "127.0.0.1:3000",
+	"mods": [
+		"admin"
+	],
 	"updateInterval": 50,
 	"positionUpdateTolerance": 100,
 	"chatDelay": 10000,

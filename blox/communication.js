@@ -52,18 +52,10 @@ changeBlockHandler = function(player, socket, data) {
 /* handle a chat-message */
 chatHandler = function(player, socket, data) {
 	console.log('player #'+player.id+' sends chat-message: '+data.msg);
+	gameEngine.chat({id: player.id, msg: data.msg});
 	forAllPlayers(function(otherPlayer) {
 		otherPlayer.socket.emit('chat', data);
 	});
-	/* später auslagern in mod-chain
-	if(data.msg = "spawn") {
-		var bot = { id: players.length, data: {type: 'minenarbeiter', x: 500, y: 100, controllMode: 'harmless'}, socket: false, active: true, socket: {emit: function(){}} };
-		gameEngine.addPlayer(bot.id,bot.data);
-		forAllPlayers(function(otherPlayer, index) {	 
-			otherPlayer.socket.emit('new', { id: bot.id, data: bot.data }); 
-		});
-		players.push(bot);
-	}*/
 }
 
 /* führe ein callback für alle player aus (ausser einem) */
@@ -87,10 +79,16 @@ forAllPlayers = function(callback) {
 
 var gameEngine = require('./gameengine');
 gameEngine.setEmitter(forAllPlayers);
-
-/*var bot = { id: players.length, data: {type: 'minenarbeiter', x: 500, y: 100, controllMode: 'harmless'}, socket: false, active: true };
-gameEngine.addPlayer(bot.id,bot.data);
-players.push(bot);*/
+gameEngine.setPlayerHandler({
+	createBot: function(data) {
+		var bot = { id: players.length, data: data, socket: false, active: true, socket: {emit: function(){}} };
+		gameEngine.addPlayer(bot.id,bot.data);
+		forAllPlayers(function(otherPlayer, index) {	 
+			otherPlayer.socket.emit('new', { id: bot.id, data: bot.data }); 
+		});
+		players.push(bot);	
+	}
+});
 
 /* verarbeite ankommende verbindungen */
 module.exports.communicationHandler = function(socket) {
