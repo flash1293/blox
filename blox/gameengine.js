@@ -17,7 +17,7 @@ Object.defineProperty(
 var saws = require('./saws');
 var builder = require('../public/src/Builder');
 var config = require('../public/config');
-var modController = require('./modcontroller');
+var modController = {};
 var contents = {
 	players: require('../public/assets/players.json'),
 	tools: require('../public/assets/tools.json'),
