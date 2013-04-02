@@ -58,7 +58,6 @@ jaws.onload = function() {
 	};
 	
 	window.onbeforeunload = function() {
-		console.log("called");
 		if(config.persistPosition) {
 			gameEngine.set("position",gameEngine.player.getPosition());
 		}
