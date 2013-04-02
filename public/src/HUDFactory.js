@@ -14,13 +14,19 @@ gameEngine.HUD = function(player) {
 	this.tiedPlayer = player;
 	player.hasHealthBar = true;
 	//create itembox
-	this.itembox = $('<div id="itembox"></div>');
 	this.itembox = $("<div id='itembox'></div>");
 	for(var i=0;i<9;i++) {
 		var itemwrapper = $("<div id='itembox-"+i+"'></div>").addClass('itemwrapper').data("id",i);
 		this.itembox.append(itemwrapper);
 	}
 	container.push(this.itembox);
+	//big inventory
+	this.inventory = $("<div id='inventory'></div>").hide();
+	for(var i=0;i<36;i++) {
+		var itemwrapper = $("<div id='inventory-"+i+"'></div>").addClass('itemwrapper').data("id",i);
+		this.inventory.append(itemwrapper);
+	}
+	container.push(this.inventory);
 	//create healthbar
 	this.healthbar = $('<div id="healthbar"></div>');
 	container.push(this.healthbar);
@@ -33,6 +39,9 @@ gameEngine.HUD = function(player) {
 	var chatButton = $('<div id="chat"></div>').addClass("button").html("T");
 	chatButton.click(player.chat);
 	this.buttonbox.append(chatButton);
+	var iButton = $('<div id="inventory_btn"></div>').addClass("button").html("I");
+	iButton.click(gameEngine.showInventory);
+	this.buttonbox.append(iButton);
 	if(!config.multiplayer) {
 		var shareButton = $('<div id="share"></div>').addClass("button").html("S");
 		shareButton.click(gameEngine.shareMap);

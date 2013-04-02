@@ -223,6 +223,15 @@ var gameEngine = {
 			});
 		});
 	},
+	showInventory: function() {
+		if(gameEngine.hud.inventory.is(":visible")) {
+			jaws.game_loop.unpause();
+			gameEngine.hud.inventory.hide();
+		} else {
+			jaws.game_loop.pause();
+			gameEngine.hud.inventory.show();
+		}
+	},
 	/**
 	 * logs a message, default is to console.log
 	 * @method log

@@ -15,6 +15,19 @@ body {
 	left:0;
 	bottom:0;
 	background: url(assets/hud/Inventar.png) top left no-repeat;
+	z-index: 2;
+}
+
+#inventory {
+	width: 671px;
+	height: 365px;
+	position:absolute;
+	left:50%;
+	top:50%;
+	margin-left:-335px;
+	margin-top:-183px;
+	background: url(assets/hud/Big_Inventar_1.png) top left no-repeat;
+	z-index: 1;
 }
 
 #itembox-0 {top: 39px;left: 10px;}
@@ -63,6 +76,13 @@ body {
 		-webkit-transform: scale(0.7) translate(-40px, 39px);
 		-o-transform: scale(0.7) translate(-40px, 39px);
 		transform: scale(0.7) translate(-40px, 39px);
+	}
+	
+	#inventory {
+		-moz-transform: scale(0.7);
+		-webkit-transform: scale(0.7);
+		-o-transform: scale(0.7);
+		transform: scale(0.7);
 	}
 }
 
@@ -115,6 +135,7 @@ body {
 	top: 0;
 	width: 50%;
 	padding:10px;
+	z-index: 3;
 }
 
 .button {
