@@ -307,6 +307,43 @@ gameEngine.Player.prototype.move = function() {
 	this.sprite.y = Math.floor(this.sprite.y);
 };
 
+/**
+* Sets the small inventory by a matrix = [["type1",amount1],["type2",amount2],...]
+*
+* @method setInventory
+* @param {Array} inventory the data-matrix
+*/
+gameEngine.Player.prototype.setInventory = function(inventory) {
+	var that = this;
+	inventory.foreach(function(key,item) {
+		that.smallInventory[key] = gameEngine.ItemFactory({type:item[0],amount:item[1]});;
+	});
+};
+
+/**
+* Returns the inventory of a player as a data-matrix
+*
+* @method getInventory
+*/
+gameEngine.Player.prototype.getInventory = function() {
+	var matrix = [];
+	this.smallInventory.foreach(function(key,item) {
+		matrix.push([item.type,item.amount]);
+	});
+	return matrix;
+};
+
+/**
+* Returns the position of the user in block-coordinates
+*
+* @method getPosition
+*/
+gameEngine.Player.prototype.getPosition = function() {
+	var x = this.sprite.x / config.blockSize;
+	var y = this.sprite.y / config.blockSize;
+	return [x,y];
+};
+
 
 /**
 * Creates a new player-object and returns it

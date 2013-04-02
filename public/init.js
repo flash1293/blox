@@ -56,6 +56,17 @@ jaws.onload = function() {
 		}
 		jaws.context = jaws.canvas.getContext("2d"); 
 	};
+	
+	window.onbeforeunload = function() {
+		console.log("called");
+		if(config.persistPosition) {
+			gameEngine.set("position",gameEngine.player.getPosition());
+		}
+		
+		if(config.persistInventory) {
+			gameEngine.set("smallInventory",gameEngine.player.getInventory());
+		}
+	};
 
 
 

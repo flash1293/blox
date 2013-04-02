@@ -70,13 +70,15 @@ var gameEngine = {
 	
 		//create main player (controlled by keyboard)
 		this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: ('ontouchstart' in document.documentElement?'touch':'keyboard')});
-	
-		this.player.smallInventory[0] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
-		this.player.smallInventory[1] = gameEngine.ItemFactory({type:"ladder",amount:"5"});
-		this.player.smallInventory[2] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
-		this.player.smallInventory[6] = gameEngine.ItemFactory({type:"dirt",amount:"5"});
-		this.player.smallInventory[7] = gameEngine.ItemFactory({type:"dirt",amount:"10"});
-		this.player.smallInventory[8] = gameEngine.ItemFactory({type:"dirt",amount:"10"});
+		
+		var inv = gameEngine.get("smallInventory");
+		if(config.persistInventory && inv != null) {
+			gameEngine.log("inventory load by cache");
+			this.player.setInventory(inv);
+			
+		} else {
+			this.player.setInventory(config.defaultInventory);
+		}
 	
 		//add him to the players-list (activate him)
 		this.players[0] = this.player;
@@ -110,8 +112,12 @@ var gameEngine = {
 		
 		var pos = window.location.hash.substr(1).split(',');
 		if(pos.length == 2) {
-			console.log(pos);
+			gameEngine.log("position set by hash");
 			this.player.teleport(pos[0],pos[1]);
+		} else if(config.persistPosition) {
+			var position = gameEngine.get("position");
+			gameEngine.log("position set by cache");
+			if(position != null) this.player.teleport(position[0],position[1]);
 		}
 	
 	},

@@ -61,6 +61,12 @@
 	"allowDigging": true,
 	"allowPlanting": true,
 	"debug": true,
+	"persistPosition": true,
+	"persistInventory": true,
+	"defaultInventory": [
+		["ladder",5],
+		["dirt", 17]
+	],
 	"assets": [
 		"players.json",
 		"blocks.json",
