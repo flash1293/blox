@@ -18,7 +18,7 @@ gameEngine.socketHandler = {
 		var lastChange = gameEngine.get("lastChange") || 0;
 		if(data.startUp > lastChange) {
 			gameEngine.log("server restarted after you left the game (or you've never visited the server), discarding local cache");
-			gameEngine.set("mapChanges",[]);
+			gameEngine.clearCache();
 		} else {
 			var mapChanges = gameEngine.get("mapChanges") || [];
 			for(var i=0;i<mapChanges.length;i++) {
@@ -26,6 +26,7 @@ gameEngine.socketHandler = {
 				gameEngine.socketHandler.handleBlockChange(change,true);
 			}
 		}
+		gameEngine.initOwnPlayer();
 	},
 	/**
 	 * handles an update-data-package from server

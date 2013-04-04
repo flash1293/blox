@@ -65,6 +65,8 @@ jaws.onload = function() {
 		if(config.persistInventory) {
 			gameEngine.set("smallInventory",gameEngine.player.getInventory());
 		}
+		
+		gameEngine.persistCache();
 	};
 
 

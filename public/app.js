@@ -38,6 +38,8 @@ var gameEngine = {
 	 * @method setup
 	 * */
 	setup: function() {
+		
+		gameEngine.loadCache();
 	
 		//create empty list for active players in the world
 		this.players = {};
@@ -71,14 +73,7 @@ var gameEngine = {
 		//create main player (controlled by keyboard)
 		this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: ('ontouchstart' in document.documentElement?'touch':'keyboard')});
 		
-		var inv = gameEngine.get("smallInventory");
-		if(config.persistInventory && inv != null) {
-			gameEngine.log("inventory load by cache");
-			this.player.setInventory(inv);
-			
-		} else {
-			this.player.setInventory(config.defaultInventory);
-		}
+		
 	
 		//add him to the players-list (activate him)
 		this.players[0] = this.player;
@@ -108,17 +103,10 @@ var gameEngine = {
 				var mapChanges = gameEngine.get("mapChanges") || [];
 				gameEngine.applyMapDelta(mapChanges);
 			}
+			gameEngine.initOwnPlayer();
 		}
 		
-		var pos = window.location.hash.substr(1).split(',');
-		if(pos.length == 2) {
-			gameEngine.log("position set by hash");
-			this.player.teleport(pos[0],pos[1]);
-		} else if(config.persistPosition) {
-			var position = gameEngine.get("position");
-			gameEngine.log("position set by cache");
-			if(position != null) this.player.teleport(position[0],position[1]);
-		}
+		
 	
 	},
 	applyMapDelta: function(mapChanges) {
@@ -145,6 +133,27 @@ var gameEngine = {
 				}
 			}
 		});
+	},
+	initOwnPlayer: function() {
+		var inv = gameEngine.get("smallInventory");
+		if(config.persistInventory && inv != null) {
+			gameEngine.log("inventory load by cache");
+			this.player.setInventory(inv);
+			
+		} else {
+			this.player.setInventory(config.defaultInventory);
+		}
+		gameEngine.hud.updateItembox();
+		
+		var pos = window.location.hash.substr(1).split(',');
+		if(pos.length == 2) {
+			gameEngine.log("position set by hash");
+			this.player.teleport(pos[0],pos[1]);
+		} else if(config.persistPosition) {
+			var position = gameEngine.get("position");
+			gameEngine.log("position set by cache");
+			if(position != null) this.player.teleport(position[0],position[1]);
+		}
 	},
 	/**
 	 * delegates game-logic, called every frame

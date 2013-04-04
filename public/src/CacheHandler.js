@@ -6,9 +6,9 @@ gameEngine = gameEngine || {};
 * @submodule Controlling
 * @class CacheHandler
 */
+gameEngine.localStorageFake = {};
 if(localStorage === undefined) {
-	gameEngine.localStorageFake = {};
-	gameEngine.log("no local storage available, using fake");
+	gameEngine.log("no local storage available, no persistance available");
 }
 /**
  * returns a value from the local storage
@@ -16,10 +16,7 @@ if(localStorage === undefined) {
  * @param {String} key The key of the wished value
  * */	
 gameEngine.get = function(key) {
-	if(localStorage !== undefined) {
-		return JSON.parse(localStorage.getItem((config.multiplayer ? "mp_ ":"sp_")+key));
-	}
-	return gameEngine.localStorageFake[key];
+	return gameEngine.localStorageFake[(config.multiplayer ? "mp_ ":"sp_")+key];
 };
 /**
  * sets a value in the local storage
@@ -28,9 +25,29 @@ gameEngine.get = function(key) {
  * @param {mixed} value The value to store
  * */	
 gameEngine.set = function(key,value) {
-	if(localStorage !== undefined) {
-		localStorage.setItem((config.multiplayer ? "mp_ ":"sp_")+key,JSON.stringify(value));
-		return;
-	}
-	gameEngine.localStorageFake[key] = value;
+	gameEngine.localStorageFake[(config.multiplayer ? "mp_ ":"sp_")+key] = value;
 };
+
+gameEngine.persistCache = function() {
+	if(localStorage !== undefined) {
+		gameEngine.localStorageFake.foreach(function(key, value) {
+			localStorage.setItem(key,JSON.stringify(value));
+		});
+	}
+};
+
+gameEngine.loadCache = function() {
+	if(localStorage !== undefined) {
+		var keys = Object.keys(localStorage);
+		keys.foreach(function(key, item) {
+			gameEngine.localStorageFake[item] = JSON.parse(localStorage.getItem(item));
+		});
+	}
+};
+
+gameEngine.clearCache = function() {
+	if(localStorage !== undefined) {
+		localStorage.clear();
+		gameEngine.localStorageFake = {};
+	}
+}
