@@ -6,7 +6,7 @@ gameEngine = gameEngine || {};
 * @submodule Game
 * @class HUD
 * @constructor
-* @params {Player} player The player tied to the hud 
+* @param {Player} player The player tied to the hud 
 */
 gameEngine.HUD = function(player) {
 	var container = [];

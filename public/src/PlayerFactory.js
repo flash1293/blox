@@ -6,7 +6,7 @@ gameEngine = gameEngine || {};
 * @submodule Game
 * @class Player
 * @constructor
-* @params {Object} options The options of the player. type: the type of the player, 
+* @param {Object} options The options of the player. type: the type of the player, 
 * 	x: the x-coordinate of the player (in px), y: the y-coordinate of the player (in px)
 */
 gameEngine.Player = function(options) {

@@ -6,8 +6,8 @@
         "linkNatives": "true",        
         "attributesEmit": "false",
         "selleck": "false",
-	"exclude":  "jaws.js",
-	"paths": ".",
+	"exclude":  "jaws.js,jquery.js",
+	"paths": "public",
         "outdir": "/home/flash2910/Dokumente/Documentations/Blox"
     }
 }

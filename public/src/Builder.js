@@ -7,7 +7,7 @@ if(typeof gameEngine.log === "undefined") gameEngine.log = function() {};
 * @submodule Utilities
 * @class RandomGenerator
 * @constructor
-* @params {mixed} seed The seed of the generator
+* @param {mixed} seed The seed of the generator
 */
 gameEngine.RandomGenerator = function(seed)
 {
