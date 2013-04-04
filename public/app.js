@@ -105,16 +105,22 @@ var gameEngine = {
 			}
 			gameEngine.initOwnPlayer();
 		}
-		
-		
-	
 	},
+	/**
+	 * applies an array of block-changes to the current map
+	 * @method applyMapDelta
+	 * @param {Array} mapChanges the map-changes to apply to the map
+	 * */
 	applyMapDelta: function(mapChanges) {
 		for(var i=0;i<mapChanges.length;i++) {
 				var change = mapChanges[i];
 				gameEngine.socketHandler.handleBlockChange(change,true);
 			}
 	},
+	/**
+	 * tries to share the current map via ajax
+	 * @method shareMap
+	 * */
 	shareMap: function() {
 		var mapName = prompt("What's the name of your map?");
 		$.ajax({
@@ -134,6 +140,10 @@ var gameEngine = {
 			}
 		});
 	},
+	/**
+	 * initializes the user-player position and inventory by cache or config
+	 * @method initOwnPlayer
+	 * */
 	initOwnPlayer: function() {
 		var inv = gameEngine.get("smallInventory");
 		if(config.persistInventory && inv != null) {
@@ -232,6 +242,10 @@ var gameEngine = {
 			});
 		});
 	},
+	/**
+	 * toggles the inventory and pauses/unpauses the game
+	 * @method showInventory
+	 * */
 	showInventory: function() {
 		if(gameEngine.hud.inventory.is(":visible")) {
 			jaws.game_loop.unpause();

@@ -27,7 +27,10 @@ gameEngine.get = function(key) {
 gameEngine.set = function(key,value) {
 	gameEngine.localStorageFake[(config.multiplayer ? "mp_ ":"sp_")+key] = value;
 };
-
+/**
+ * persists the game-cache to the localStorage, if available
+ * @method persistCache
+ * */	
 gameEngine.persistCache = function() {
 	if(localStorage !== undefined) {
 		gameEngine.localStorageFake.foreach(function(key, value) {
@@ -35,7 +38,10 @@ gameEngine.persistCache = function() {
 		});
 	}
 };
-
+/**
+ * loads the game-cache from the localStorage, if available, to the ingame-cache
+ * @method loadCache
+ * */	
 gameEngine.loadCache = function() {
 	if(localStorage !== undefined) {
 		var keys = Object.keys(localStorage);
@@ -44,10 +50,13 @@ gameEngine.loadCache = function() {
 		});
 	}
 };
-
+/**
+ * removes the game-cache completely
+ * @method clearCache
+ * */	
 gameEngine.clearCache = function() {
 	if(localStorage !== undefined) {
 		localStorage.clear();
 		gameEngine.localStorageFake = {};
 	}
-}
+};
