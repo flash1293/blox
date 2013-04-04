@@ -216,7 +216,7 @@ module.exports = {
 		players[id] = newPlayer;
 	},
 	removePlayer: function(id) {
-		modController.trigger("deletePlayer",{id: id});
+		modController.trigger("removePlayer",{id: id});
  		delete players[id];
 	},
 	updatePlayer: function(id,data) {
