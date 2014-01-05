@@ -280,8 +280,13 @@ jaws.forceArray = function(obj) {
 }
 
 /** Clears screen (the canvas-element) through context.clearRect() */
-jaws.clear = function() {
-  jaws.context.clearRect(0,0,jaws.width,jaws.height)
+jaws.clear = function(color) {
+  if(color === undefined) {
+    jaws.context.clearRect(0,0,jaws.width,jaws.height)
+  } else {
+    jaws.context.fillStyle=color;
+    jaws.context.fillRect(0,0,jaws.width,jaws.height);
+  }
 }
 
 /** Returns true if obj is an Image */
@@ -529,6 +534,7 @@ function handleMouseUp(e) {
  * handle event "touchstart" by remembering what button was pressed
  */
 function handleTouchStart(e) {
+	if(this.paused) return; //no touch events if game is frozen
 	event = (e) ? e : window.event;
 	jaws.mouse_x = e.touches[0].pageX - jaws.canvas.offsetLeft;
 	jaws.mouse_y = e.touches[0].pageY - jaws.canvas.offsetTop;
