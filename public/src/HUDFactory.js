@@ -75,6 +75,8 @@ gameEngine.HUD.prototype.enableDragDrop = function() {
 		revert: "invalid", //reset if dropped in nirvana
 		stop: function( ev ) {
 			console.log("stoped dragging");
+			//normalize item-position
+			$(ev.target).css({"left": 0, "top": 0});
 		},
 		start: function( ev ) {
 			console.log("started dragging");
