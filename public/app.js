@@ -73,7 +73,13 @@ var gameEngine = {
 		//create main player (controlled by keyboard)
 		this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: ('ontouchstart' in document.documentElement?'touch':'keyboard')});
 		
+		for(var i=0;i<32;i++) {
+			this.player.bigInventory[i] = gameEngine.ItemFactory({type:'dirt',amount:4});
+		}
 		
+		this.player.bigInventory[0] = gameEngine.ItemFactory({type:'ladder',amount:10});
+		this.player.bigInventory[2] = gameEngine.ItemFactory({type:'ladder',amount:10});
+		this.player.bigInventory[11] = gameEngine.ItemFactory({type:'ladder',amount:10}); 
 	
 		//add him to the players-list (activate him)
 		this.players[0] = this.player;
@@ -250,9 +256,14 @@ var gameEngine = {
 		if(gameEngine.hud.inventory.is(":visible")) {
 			jaws.game_loop.unpause();
 			gameEngine.hud.inventory.hide();
+			gameEngine.hud.itembox.removeClass("onInventory");
+			$('.item').draggable('disable');
 		} else {
 			jaws.game_loop.pause();
+			gameEngine.hud.updateItembox(true);
 			gameEngine.hud.inventory.show();
+			gameEngine.hud.itembox.addClass("onInventory");
+			gameEngine.hud.enableDragDrop();
 		}
 	},
 	/**

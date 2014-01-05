@@ -316,7 +316,7 @@ gameEngine.Player.prototype.move = function() {
 gameEngine.Player.prototype.setInventory = function(inventory) {
 	var that = this;
 	inventory.foreach(function(key,item) {
-		that.smallInventory[key] = gameEngine.ItemFactory({type:item[0],amount:item[1]});;
+		that.smallInventory[key] = gameEngine.ItemFactory({type:item[0],amount:item[1]});
 	});
 };
 

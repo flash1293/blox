@@ -51,7 +51,8 @@ gameEngine.HUD = function(player) {
 	
 	//append all containers to body
 	var body = $('body');
-	$(container).each(function(i,el) { body.append(el);});	
+	$(container).each(function(i,el) { body.append(el);});
+	
 };
 
 /**
@@ -63,21 +64,25 @@ gameEngine.HUD.prototype.setHealthTo = function(quot) {
 	this.healthbarInner.width(Math.floor(quot*168)+"px");
 };
 
+gameEngine.HUD.prototype.enableDragDrop = function() {
+	$('.item').draggable({
+		stop: function( ev ) { console.log(ev); }
+	});
+	$('.itemwrapper').droppable({
+		drop: function(ev) { console.log(ev); }
+	});
+};
+
 /**
 * Updates the itembox to the current value in the players inventory
 * @method updateItembox
 */
-gameEngine.HUD.prototype.updateItembox = function() {
+gameEngine.HUD.prototype.updateItembox = function(includeInventory) {
 	gameEngine.log("update itembox");
 	for(var i=0;i<9;i++) {
 		var item = this.tiedPlayer.smallInventory[i];
 		if(item !== undefined) {
-			var html= "<div class=\"item\" style=\"background-image:url(assets/items/"+item.staticInfo.sprite+")\"><div class=\"amount\">"+item.amount+"</div></div>";
-			var itemwrapper = $('#itembox-'+i); 
-			if(itemwrapper.html() != html) {
-				itemwrapper.html(html);
-				itemwrapper.click(this.handleItemClick);  
-			}
+			this.updateItemWrapper($('#itembox-'+i), item)
 		} else {
 			$('#itembox-'+i).html('');
 		}
@@ -87,8 +92,24 @@ gameEngine.HUD.prototype.updateItembox = function() {
 		} else {
 			$('#itembox-'+i).removeClass('selected');
 		}
+	}
+	if(includeInventory) {
+		for(var i=0;i<36;i++) {
+			var item = this.tiedPlayer.bigInventory[i];
+			if(item !== undefined) {
+				this.updateItemWrapper($('#inventory-'+i), item);
+			} else {
+				$('#inventory-'+i).html('');
+			}
+		}
+	}
+};
 
-
+gameEngine.HUD.prototype.updateItemWrapper= function(el, item) {
+	var html= "<div class=\"item\" style=\"background-image:url(assets/items/"+item.staticInfo.sprite+")\"><div class=\"amount\">"+item.amount+"</div></div>"; 
+	if(el.html() != html) {
+		el.html(html);
+		el.click(this.handleItemClick);  
 	}
 };
 

@@ -18,6 +18,18 @@ body {
 	z-index: 2;
 }
 
+#itembox.onInventory {
+	background: none;
+	left:50%;
+	top:50%;
+	margin-left: -299px;
+	margin-top: -53px;
+	/*-moz-transform: scale(0.95);
+	-webkit-transform: scale(0.95);
+	-o-transform: scale(0.95);
+	transform: scale(0.95);*/
+}
+
 #inventory {
 	width: 671px;
 	height: 365px;
@@ -30,6 +42,13 @@ body {
 	z-index: 1;
 }
 
+#inventory .itemwrapper {
+	/*-moz-transform: scale(0.95);
+	-webkit-transform: scale(0.95);
+	-o-transform: scale(0.95);
+	transform: scale(0.95);*/
+}
+
 #itembox-0 {top: 39px;left: 10px;}
 #itembox-1 {top: 39px;left: 57px;}
 #itembox-2 {top: 39px;left: 104px;}
@@ -40,8 +59,43 @@ body {
 #itembox-7 {top: 133px;left: 57px;}
 #itembox-8 {top: 133px;left: 104px;}
 
+#inventory-0 {top: 149px;left: 239px;}
+#inventory-1 {top: 149px;left: 285px;}
+#inventory-2 {top: 149px;left: 331px;}
+#inventory-3 {top: 149px;left: 377px;}
+#inventory-4 {top: 149px;left: 423px;}
+#inventory-5 {top: 149px;left: 469px;}
+#inventory-6 {top: 149px;left: 512px;}
+#inventory-7 {top: 149px;left: 561px;}
+#inventory-8 {top: 192px;left: 239px;}
+#inventory-9 {top: 192px;left: 285px;}
+#inventory-10 {top: 192px;left: 331px;}
+#inventory-11 {top: 192px;left: 377px;}
+#inventory-12 {top: 192px;left: 423px;}
+#inventory-13 {top: 192px;left: 469px;}
+#inventory-14 {top: 192px;left: 512px;}
+#inventory-15 {top: 192px;left: 561px;}
+#inventory-16 {top: 235px;left: 239px;}
+#inventory-17 {top: 235px;left: 285px;}
+#inventory-18 {top: 235px;left: 331px;}
+#inventory-19 {top: 235px;left: 377px;}
+#inventory-20 {top: 235px;left: 423px;}
+#inventory-21 {top: 235px;left: 469px;}
+#inventory-22 {top: 235px;left: 512px;}
+#inventory-23 {top: 235px;left: 561px;}
+#inventory-24 {top: 278px;left: 239px;}
+#inventory-25 {top: 278px;left: 285px;}
+#inventory-26 {top: 278px;left: 331px;}
+#inventory-27 {top: 278px;left: 377px;}
+#inventory-28 {top: 278px;left: 423px;}
+#inventory-29 {top: 278px;left: 469px;}
+#inventory-30 {top: 278px;left: 512px;}
+#inventory-31 {top: 278px;left: 561px;}
+
 .itemwrapper {
 	position:absolute;
+	width: 48px;
+	height: 48px;
 }
 
 .amount {
