@@ -65,11 +65,42 @@ gameEngine.HUD.prototype.setHealthTo = function(quot) {
 };
 
 gameEngine.HUD.prototype.enableDragDrop = function() {
+	//define object for drag-info in this closjure
+	var drag = {
+		fromElement: null, //source-container-element
+		toElement: null //target-container element
+	};
+	var that = this;
 	$('.item').draggable({
-		stop: function( ev ) { console.log(ev); }
+		revert: "invalid", //reset if dropped in nirvana
+		stop: function( ev ) {
+			console.log("stoped dragging");
+		},
+		start: function( ev ) {
+			console.log("started dragging");
+			drag.fromElement = ev.target.parentElement;
+			drag.toElement = null;
+		}
 	});
 	$('.itemwrapper').droppable({
-		drop: function(ev) { console.log(ev); }
+		drop: function(ev) {
+			console.log("dropped in stash");
+			drag.toElement = ev.target;
+
+			var fromIndex = that.getSmallInventoryIndex(drag.fromElement.id);
+			var isFromBigInventory = fromIndex == -1;
+			if(isFromBigInventory) {
+				fromIndex = that.getBigInventoryIndex(drag.fromElement.id);
+			}
+
+			var toIndex = that.getSmallInventoryIndex(drag.toElement.id);
+			var isToBigInventory = toIndex == -1;
+			if(isToBigInventory) {
+				toIndex = that.getBigInventoryIndex(drag.toElement.id);
+			}
+
+			that.tiedPlayer.moveItemFromSlotToSlot(Number(fromIndex),isFromBigInventory,Number(toIndex),isToBigInventory);
+		}
 	});
 };
 
@@ -103,6 +134,17 @@ gameEngine.HUD.prototype.updateItembox = function(includeInventory) {
 			}
 		}
 	}
+	if(gameEngine.hud.inventory.is(":visible")) this.enableDragDrop();
+};
+
+gameEngine.HUD.prototype.getSmallInventoryIndex = function(id) {
+	if(id.indexOf("itembox") == -1) return -1;
+	return id.substring(id.indexOf("-")+1);
+};
+
+gameEngine.HUD.prototype.getBigInventoryIndex = function(id) {
+	if(id.indexOf("inventory") == -1) return -1;
+	return id.substring(id.indexOf("-")+1);
 };
 
 gameEngine.HUD.prototype.updateItemWrapper= function(el, item) {
@@ -118,6 +160,7 @@ gameEngine.HUD.prototype.updateItemWrapper= function(el, item) {
 * @method handleItemClick
 */
 gameEngine.HUD.prototype.handleItemClick = function(ev) {
+	if(gameEngine.hud.inventory.is(":visible")) return;
 	var i = $(this).data('id');
 	gameEngine.hud.tiedPlayer.selectedItem = i;
 	var item = gameEngine.hud.tiedPlayer.smallInventory[i];

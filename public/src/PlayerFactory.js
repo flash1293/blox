@@ -142,6 +142,42 @@ gameEngine.Player.prototype.addItemsToInventory = function(type,amount) {
 	return false;
 };
 
+gameEngine.Player.prototype.moveItemFromSlotToSlot = function(fromIndex,isFromBigInventory,toIndex,isToBigInventory) {
+	//if droped in same slot
+	if(fromIndex == toIndex && isFromBigInventory == isToBigInventory) return;
+
+	var fromInventory = (isFromBigInventory ? this.bigInventory : this.smallInventory);
+	var toInventory = (isToBigInventory ? this.bigInventory : this.smallInventory);
+
+	//if target-slot is empty;
+	if(typeof toInventory[toIndex] != "object") {
+		toInventory[toIndex] = fromInventory[fromIndex];
+		fromInventory[fromIndex] = undefined;
+		gameEngine.hud.updateItembox(isFromBigInventory || isToBigInventory);
+		return;
+	}
+
+	var fromItem = fromInventory[fromIndex];
+	var toItem = toInventory[toIndex];
+
+	//if item-types doesn't match
+	if(fromItem.type != toItem.type) return;
+
+
+	if(fromItem.amount+toItem.amount > fromItem.staticInfo.maxAmount) {
+		//split items
+		var transferAmount = fromItem.staticInfo.maxAmount - toItem.amount;
+		fromItem.amount -= transferAmount;
+		toItem.amount += transferAmount;
+	} else {
+		//complete transaction
+		toItem.amount += fromItem.amount;
+		fromInventory[fromIndex] = undefined;
+	}
+
+	gameEngine.hud.updateItembox(isFromBigInventory || isToBigInventory);
+}
+
 /**
 * Returns the current selected Item
 *
