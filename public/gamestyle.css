@@ -112,7 +112,7 @@ body {
 	background-repeat: no-repeat;
 }
 
-.selected:after {
+.selected:before {
 	background: url(assets/hud/ItemAuswahl2.png) top left no-repeat;
 	width:54px;
 	height:54px;
