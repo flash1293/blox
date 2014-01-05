@@ -9,6 +9,12 @@ if(config.multiplayer) {
 
 //if the jaws-lib is loaded
 jaws.onload = function() {
+
+	//convert touch to mouse-events
+	document.addEventListener("touchstart", touchHandler, true);
+	document.addEventListener("touchmove", touchHandler, true);
+	document.addEventListener("touchend", touchHandler, true);
+	document.addEventListener("touchcancel", touchHandler, true);
 	
 	if(config.multiplayer) {
 		socket.on('init', gameEngine.socketHandler.handleInit);
@@ -37,8 +43,7 @@ jaws.onload = function() {
 		canvHeight = window.innerHeight;
 	}
 
-	var startOptions = {bgcolor: 'skyblue', width: canvWidth, height: canvHeight};
-	console.log(startOptions);
+	var startOptions = {/*bgcolor: 'skyblue',*/ width: canvWidth, height: canvHeight};
 
 	//start the engine
 	jaws.start(gameEngine,startOptions);
