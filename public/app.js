@@ -190,25 +190,32 @@ var gameEngine = {
 			if(position != null) this.player.teleport(position[0],position[1]);
 		}
 	},
+    /**
+	 * method called each game-tick to apply player-actions
+	 * @method playerTick
+	 * */
+    playerTick: function(id, player){
+        //make a descision for next move (input= ki/keyboard/...)
+        player.controll();
+        //move the player resp. to its vector-values (collision-check etc.)
+        player.move();
+        //adjust the used sprite for the player
+        player.adjustDisplayMode();	
+    },
 	/**
 	 * delegates game-logic, called every frame
 	 * @method update
 	 * */
 	update: function() {
 		var currentTimeStamp = Date.now();
+        
 		//get independent from game-logic (important for slow pcs and multiplayer)
 		for(var i=this.lastUpdate;i<currentTimeStamp;i=i+config.physicalFrameTime) {
 			//iterate all players 
-			this.players.foreach(function(id, player){
-				//make a descision for next move (input= ki/keyboard/...)
-				player.controll();
-				//move the player resp. to its vector-values (collision-check etc.)
-				player.move();
-				//adjust the used sprite for the player
-				player.adjustDisplayMode();	
-			});
+			this.players.foreach(this.playerTick);
 		}
-		//adjust position of the viewport
+        
+        //adjust position of the viewport
 		this.viewport.centerAround(this.player.sprite);
 		//for fps-independet game-logic
 		this.lastUpdate = currentTimeStamp;
