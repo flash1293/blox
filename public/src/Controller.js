@@ -96,6 +96,15 @@ gameEngine.controllers = {
 			this.selectedItem = 8;
 			gameEngine.hud.updateItembox();
 		}
+        var wheelDelta = jaws.getWheelDelta();
+        if(wheelDelta > 0) {
+            this.selectedItem = (this.selectedItem + 1) % 9;
+            gameEngine.hud.updateItembox();
+        } else if (wheelDelta < 0) {
+            this.selectedItem = (this.selectedItem + 8) % 9;
+            gameEngine.hud.updateItembox();
+        }
+        
 	},
 	/**
 	* Handles touch-input (smarthpone/tablet)

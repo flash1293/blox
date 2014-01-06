@@ -368,6 +368,7 @@ var jaws = (function(jaws) {
   var on_keyup_callbacks = []
   var mousebuttoncode_to_string = []
   var ie_mousebuttoncode_to_string = []
+  var wheel_delta = 0
  
 /** @private
  * Map all javascript keycodes to easy-to-remember letters/words
@@ -447,6 +448,8 @@ jaws.setupInput = function() {
 
   window.addEventListener("keydown", handleKeyDown)
   window.addEventListener("keyup", handleKeyUp)
+  window.addEventListener("mousewheel", handleMouseWheel)
+  window.addEventListener("DOMMouseScroll", handleMouseWheel)
   window.addEventListener("mousedown", handleMouseDown, false);
   window.addEventListener("mouseup", handleMouseUp, false);
   window.addEventListener("touchstart", handleTouchStart, false);
@@ -496,6 +499,16 @@ function handleKeyDown(e) {
   }
   if(prevent_default_keys[human_name]) { e.preventDefault() }
 }
+    
+/** @private
+ * handle event "onmousewheel" by remembering delta till its consumed by getWheelDelta()
+ */
+function handleMouseWheel(e) {
+  event = (e) ? e : window.event  
+  var delta = Math.max(-1, Math.min(1, (e.wheelDelta || -e.detail)));
+  wheel_delta += delta;
+}
+    
 /** @private
  * handle event "onmousedown" by remembering what button was pressed
  */
@@ -576,6 +589,15 @@ jaws.preventDefaultKeys = function(array_of_strings) {
  */
 jaws.pressed = function(key) {
   return pressed_keys[key]
+}
+
+/**
+ * Returns the mousewheel-delta since the last call of this method
+ */
+jaws.getWheelDelta = function() {
+  var delta = wheel_delta;
+  wheel_delta = 0;
+  return delta;
 }
 
 /** 
