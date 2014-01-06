@@ -182,7 +182,7 @@ gameEngine.HUD.prototype.handleItemClick = function(ev) {
 gameEngine.HUD.prototype.addChatMessage = function(sender,message) {
 	var id = 'cm-'+Date.now();
 	var message = $('<div id='+id+'>'+sender+': '+message+'</div>');
-	$('#chatbox').prepend(message);
+	$('#chatbox').append(message);
 	setTimeout(function(){ gameEngine.log("remove chat-message"); $('#'+id).remove();  },config.chatDelay);
 };
 	
