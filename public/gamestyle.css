@@ -93,13 +93,14 @@ body {
 	font-weight: bold;
 	position: absolute;
 	right: 5px;
-	bottom: 2px;
+	bottom: 1px;
 }
 
 .item {
 	width: 38px;
 	height: 38px;
 	background-repeat: no-repeat;
+    position: relative;
 }
 
 .selected:before {
