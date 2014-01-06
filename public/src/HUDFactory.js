@@ -153,6 +153,7 @@ gameEngine.HUD.prototype.updateItemWrapper= function(el, item) {
 	var html= "<div class=\"item\" style=\"background-image:url(assets/items/"+item.staticInfo.sprite+")\"><div class=\"amount\">"+item.amount+"</div></div>"; 
 	if(el.html() != html) {
 		el.html(html);
+        el.unbind("click");
 		el.click(this.handleItemClick);  
 	}
 };
@@ -167,10 +168,14 @@ gameEngine.HUD.prototype.handleItemClick = function(ev) {
 	gameEngine.hud.tiedPlayer.selectedItem = i;
 	var item = gameEngine.hud.tiedPlayer.smallInventory[i];
 	gameEngine.hud.updateItembox();
-	if(item.staticInfo["toBlock"] != "") {
+    if(gameEngine.touchPlace === true) {
+        gameEngine.touchPlace = false;
+        if(gameEngine.hud.tiedPlayer.controllMode == "touch") $('#placenow').hide();
+    } else if(item.staticInfo.toBlock != "") {
 		gameEngine.touchPlace = true;
 		if(gameEngine.hud.tiedPlayer.controllMode == "touch") $('#placenow').show();
 	}
+    ev.preventDefault();
 }
 
 /**
