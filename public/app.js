@@ -92,10 +92,6 @@ var gameEngine = {
 		//create main player (controlled by keyboard)
 		this.player = gameEngine.PlayerFactory({x: config.startPosX, y: config.startPosY, type: 'minenarbeiter', controllMode: ('ontouchstart' in document.documentElement?'touch':'keyboard')});
 		
-		for(var i=0;i<32;i++) {
-			this.player.bigInventory[i] = gameEngine.ItemFactory({type:'dirt',amount:4});
-		}
-		
 		this.player.bigInventory[0] = gameEngine.ItemFactory({type:'ladder',amount:10});
 		this.player.bigInventory[2] = gameEngine.ItemFactory({type:'ladder',amount:10});
 		this.player.bigInventory[11] = gameEngine.ItemFactory({type:'ladder',amount:10}); 
