@@ -142,6 +142,15 @@ gameEngine.Player.prototype.addItemsToInventory = function(type,amount) {
 	return false;
 };
 
+/**
+* Moves an item from one inventory-slot to another (if there is not enough space (maxAmount), only partially)
+*
+* @method moveItemFromSlotToSlot
+* @param {Integer} the index of the source-slot
+* @param {Boolean} whether the source-slot is in the big inventory or not
+* @param {Integer} the index of the target-slot
+* @param {Boolean} whether the target-slot is in the big inventory or not
+*/
 gameEngine.Player.prototype.moveItemFromSlotToSlot = function(fromIndex,isFromBigInventory,toIndex,isToBigInventory) {
 	//if droped in same slot
 	if(fromIndex == toIndex && isFromBigInventory == isToBigInventory) return;
@@ -176,7 +185,20 @@ gameEngine.Player.prototype.moveItemFromSlotToSlot = function(fromIndex,isFromBi
 	}
 
 	gameEngine.hud.updateItembox(isFromBigInventory || isToBigInventory);
-}
+};
+
+/**
+* Removes an item from the inventory and updates it in the HUD
+*
+* @method removeItem
+* @param {Integer} the index of the item-slot
+* @param {Boolean} whether the item-slot is in the big inventory or not
+*/
+gameEngine.Player.prototype.removeItem = function(index,isBigInventory) {
+    var inventory = (isBigInventory ? this.bigInventory : this.smallInventory);
+    inventory[index] = undefined;
+    gameEngine.hud.updateItembox(isBigInventory);
+};
 
 /**
 * Returns the current selected Item

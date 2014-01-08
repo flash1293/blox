@@ -38,6 +38,16 @@ body {
 	z-index: 1;
 }
 
+#trash {
+    background: url(assets/hud/trash.png) top left no-repeat;
+    background-size: 100% auto;
+    width: 39px;
+    height: 39px;
+    position: absolute;
+    left: 18px;
+    top: 23px;
+}
+
 
 #itembox-0 {top: 39px;left: 10px;}
 #itembox-1 {top: 39px;left: 57px;}

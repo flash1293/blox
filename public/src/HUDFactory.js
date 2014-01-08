@@ -26,6 +26,7 @@ gameEngine.HUD = function(player) {
 		var itemwrapper = $("<div id='inventory-"+i+"'></div>").addClass('itemwrapper').data("id",i);
 		this.inventory.append(itemwrapper);
 	}
+    this.inventory.append("<div id='trash'></div>");
 	container.push(this.inventory);
 	//create healthbar
 	this.healthbar = $('<div id="healthbar"></div>');
@@ -66,7 +67,7 @@ gameEngine.HUD.prototype.setHealthTo = function(quot) {
 
 gameEngine.HUD.prototype.enableDragDrop = function() {
 	//define object for drag-info in this closjure
-	var drag = {
+	var dragInformation = {
 		fromElement: null, //source-container-element
 		toElement: null //target-container element
 	};
@@ -74,36 +75,49 @@ gameEngine.HUD.prototype.enableDragDrop = function() {
 	$('.item').draggable({
 		revert: "invalid", //reset if dropped in nirvana
 		stop: function( ev ) {
-			console.log("stoped dragging");
 			//normalize item-position
 			$(ev.target).css({"left": 0, "top": 0});
 		},
 		start: function( ev ) {
-			console.log("started dragging");
-			drag.fromElement = ev.target.parentElement;
-			drag.toElement = null;
+			dragInformation.fromElement = ev.target.parentElement;
+			dragInformation.toElement = null;
 		}
 	});
+    var dropHandler = function(ev) { 
+        that.handleItemDrop(ev,dragInformation,ev.target.id == "trash"); 
+    };
+    $('#trash').droppable({
+        drop: dropHandler
+    });
 	$('.itemwrapper').droppable({
-		drop: function(ev) {
-			console.log("dropped in stash");
-			drag.toElement = ev.target;
-
-			var fromIndex = that.getSmallInventoryIndex(drag.fromElement.id);
-			var isFromBigInventory = fromIndex == -1;
-			if(isFromBigInventory) {
-				fromIndex = that.getBigInventoryIndex(drag.fromElement.id);
-			}
-
-			var toIndex = that.getSmallInventoryIndex(drag.toElement.id);
-			var isToBigInventory = toIndex == -1;
-			if(isToBigInventory) {
-				toIndex = that.getBigInventoryIndex(drag.toElement.id);
-			}
-
-			that.tiedPlayer.moveItemFromSlotToSlot(Number(fromIndex),isFromBigInventory,Number(toIndex),isToBigInventory);
-		}
+		drop: dropHandler
 	});
+};
+
+gameEngine.HUD.prototype.handleItemDrop = function(ev,dragInformation, isTrash) {
+    dragInformation.toElement = ev.target;
+
+    var fromIndex = this.getSmallInventoryIndex(dragInformation.fromElement.id);
+    var isFromBigInventory = fromIndex == -1;
+    if(isFromBigInventory) {
+        fromIndex = this.getBigInventoryIndex(dragInformation.fromElement.id);
+    }
+    
+    if(isTrash) {
+        this.tiedPlayer.removeItem(Number(fromIndex),isFromBigInventory);
+    } else {        
+        var toIndex = this.getSmallInventoryIndex(dragInformation.toElement.id);
+        var isToBigInventory = toIndex == -1;
+        if(isToBigInventory) {
+            toIndex = this.getBigInventoryIndex(dragInformation.toElement.id);
+        }
+        
+        this.tiedPlayer.moveItemFromSlotToSlot(
+            Number(fromIndex),
+            isFromBigInventory,
+            Number(toIndex),
+            isToBigInventory);
+    }
 };
 
 /**
