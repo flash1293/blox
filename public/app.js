@@ -144,22 +144,28 @@ var gameEngine = {
 	 * */
 	shareMap: function() {
 		var mapName = prompt("What's the name of your map?");
-		$.ajax({
-			url: "/store",
-			type: "post",
-			data: {
-				name: mapName,
-				delta: JSON.stringify(gameEngine.get('mapChanges'))
-			},
-			success: function(data) {
-				var status = data;
-				if(status.ok) {
-					alert('Upload complete!');
-				} else {
-					alert(status.msg);
-				}
-			}
-		});
+        if(mapName !== null) { //would be abort
+            if(mapName.length > 0) {
+                $.ajax({
+                    url: "/store",
+                    type: "post",
+                    data: {
+                        name: mapName,
+                        delta: JSON.stringify(gameEngine.get('mapChanges'))
+                    },
+                    success: function(data) {
+                        var status = data;
+                        if(status.ok) {
+                            alert('Upload complete!');
+                        } else {
+                            alert(status.msg);
+                        }
+                    }
+                });
+            } else {
+                alert('Please provide a name');
+            }
+        }
 	},
 	/**
 	 * initializes the user-player position and inventory by cache or config
