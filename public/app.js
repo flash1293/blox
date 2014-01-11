@@ -282,12 +282,12 @@ var gameEngine = {
 	 * */
 	showInventory: function() {
 		if(gameEngine.hud.inventory.is(":visible")) {
-			jaws.game_loop.unpause();
+			if(!config.multiplayer) jaws.game_loop.unpause();
 			gameEngine.hud.inventory.hide();
 			gameEngine.hud.itembox.removeClass("onInventory");
 			$('.item').draggable('disable');
 		} else {
-			jaws.game_loop.pause();
+			if(!config.multiplayer) jaws.game_loop.pause();
 			gameEngine.hud.updateItembox(true);
 			gameEngine.hud.inventory.show();
 			gameEngine.hud.itembox.addClass("onInventory");

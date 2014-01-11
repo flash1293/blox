@@ -1,0 +1,15 @@
+{
+	"bomb": {
+		"collision": true,
+		"diggable": true,
+		"sprite_sheet": "dirt.png",
+        "spriteType": "static",
+        "spriteHeight": 30,
+        "spriteWidth": 30,
+        "explosion": true,
+        "range": "2",
+        "damage": "100",
+        "spawnsFire": false,
+        "gravitationFactor": 0.5
+	}
+}
