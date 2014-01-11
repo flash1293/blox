@@ -38,6 +38,7 @@ gameEngine.Fragment = function(options) {
 			this.oldDisplayMode = this.displayMode;
 			if(this.dx > 0) this.displayMode = 'faceright';
 			if(this.dx < 0) this.displayMode = 'faceleft';
+            this.sprite.setImage(this.sprite.animations[this.displayMode].next());
 		};
 	}
     
@@ -52,7 +53,7 @@ gameEngine.Fragment.prototype.explode = function() {
 };
 
 /**
-* Moves the current player and handles collision etc.
+* Moves the current fragment and handles collision etc.
 *
 * @method move
 */
@@ -89,4 +90,9 @@ gameEngine.Fragment.prototype.move = function() {
 
 	this.sprite.x = Math.floor(this.sprite.x);
 	this.sprite.y = Math.floor(this.sprite.y);
+};
+
+
+gameEngine.Fragment.prototype.draw = function() {
+	this.sprite.draw();
 };

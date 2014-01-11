@@ -104,6 +104,9 @@ var gameEngine = {
 	
 		//timestamp-check for fps-independent game-logic
 		this.lastUpdate = Date.now();
+        
+        //create explosion-handler
+        this.explosionEngine = new this.ExplosionHandler(this.world);
 	
 		//create hud
 		this.hud = gameEngine.HUDFactory(this.player);
@@ -266,6 +269,8 @@ var gameEngine = {
 	draw: function() {
 		//clear canvas
 		jaws.clear("skyblue");
+        //adjust explosions
+        this.explosionEngine.adjust(this.world);
 		//draw map
 		this.viewport.drawTileMap(this.world);
 	
