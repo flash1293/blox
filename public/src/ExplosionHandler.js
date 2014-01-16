@@ -42,7 +42,7 @@ gameEngine.ExplosionHandler.prototype.adjust = function() {
 };
 
 gameEngine.Explosion = function(x,y) {
-    this.animation = new jaws.Animation({sprite_sheet: "assets/blocks/explosion.png", frame_size: [50,50], frame_duration: 100, loop:false});
+    this.animation = new jaws.Animation({sprite_sheet: "assets/blocks/explosion.png", frame_size: [50,50], frame_duration: 30, loop:false});
     this.sprite = new jaws.Sprite({
 		scale: 1,
 		anchor: 'top_left',
