@@ -1,9 +1,19 @@
+# How to start
+
+* Install node version ``6.8.0` (probably not the version I used back then, but it starts)
+* `npm install`
+* `docker run --name blox-redis -p 6379:6379 -d redis`
+* `npm start`
+* Go to `localhost:3000`
+
+
 BLOX
 ====
 
 Blox ist ein kleines HTML5-Browsergame, das im Konzept an Minecraft angelehnt ist, d.h. man kann die Welt um sich herum auf verschiedene Arten manipulieren. Hinzu kommen menschliche und KI-Gegner, gegen die gekämpft werden kann.
 Realsiert ist das Projekt mit dem Canvas-Element für die Darstellung und der socket.io-Bibliothek für den Multiplayer-Part.
 Das Server-Backend ist in node.js implementiert.
+
 
 
 Roadmap
